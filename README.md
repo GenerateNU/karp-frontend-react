@@ -7,7 +7,7 @@ We are using React
 # Setup Instructions
 
 1. Install Node.js if you have not already (make sure you have version 20.19 or above)
-- Download from https://nodejs.org/en : Click the 'Get Node.js' button and run the commands displayed 
+- Download from https://nodejs.org/en : Click the 'Get Node.js' button and run the commands displayed
 - To confirm your installation run:
     - ```node -v```
     - ```npm -v```
