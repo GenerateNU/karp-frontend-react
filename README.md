@@ -17,3 +17,4 @@ We are using React
 5. Run ```python3 -m venv venv```
 6. Run ```source venv/bin/activate```
 7. Run ```pip install -r requirements.txt```
+8. Run ```pre-commit install```
