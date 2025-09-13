@@ -18,3 +18,7 @@ We are using React
 6. Run ```source venv/bin/activate```
 7. Run ```pip install -r requirements.txt```
 8. Run ```pre-commit install```
+
+# Production
+
+https://karp-frontend-react.vercel.app/
