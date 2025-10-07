@@ -1,16 +1,19 @@
 export async function makeRequest<T>(
-  url: string,
+  path: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
 ): Promise<T> {
-  const response = await fetch(url, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...(body && { body: JSON.stringify(body) }),
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_BASE_URL}${path}`,
+    {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      ...(body && { body: JSON.stringify(body) }),
+    }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
