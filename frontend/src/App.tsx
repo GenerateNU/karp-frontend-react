@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './Layout';
-import Sierra from './pages/Sierra';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import Items from './pages/Items';
@@ -33,7 +32,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="sierra" element={<Sierra />} />
           </Route>
         </Route>
       </Routes>

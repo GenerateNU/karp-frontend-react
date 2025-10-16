@@ -41,9 +41,6 @@ const Layout = () => {
             Items
           </Link>
         )}
-        <Link to="/sierra" style={{ marginRight: 12 }}>
-          Sierra
-        </Link>
         {isAuthenticated && (
           <Link to="/login" onClick={handleLogout}>
             Logout
