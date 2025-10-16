@@ -1,14 +1,15 @@
 import { makeRequest } from '@/api/base';
 import type {
-  UserProfile,
+  AuthUser,
   VolunteerProfile,
   VendorProfile,
   OrganizationProfile,
   AdminProfile,
+  UserType,
 } from '@/types/user';
 
-export async function getUserProfile(): Promise<UserProfile> {
-  return makeRequest<UserProfile>('/users/me', 'GET');
+export async function getUserProfile(): Promise<AuthUser> {
+  return makeRequest<AuthUser>('/users/me', 'GET');
 }
 
 export async function getVolunteerProfile(): Promise<VolunteerProfile> {
@@ -27,8 +28,11 @@ export async function getAdminProfile(): Promise<AdminProfile> {
   return makeRequest<AdminProfile>('/admins/me', 'GET');
 }
 
-// Generic function to get the appropriate profile based on user type
-export async function getProfileByUserType(userType: string): Promise<any> {
+export async function getProfileByUserType(
+  userType: UserType
+): Promise<
+  VolunteerProfile | VendorProfile | OrganizationProfile | AdminProfile
+> {
   switch (userType) {
     case 'VOLUNTEER':
       return getVolunteerProfile();

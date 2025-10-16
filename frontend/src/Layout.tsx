@@ -25,7 +25,11 @@ const Layout = () => {
         <Link to="/sierra" style={{ marginRight: 12 }}>
           Sierra
         </Link>
-        {isAuthenticated && <button onClick={handleLogout}>Logout</button>}
+        {isAuthenticated && (
+          <Link to="/login" onClick={handleLogout}>
+            Logout
+          </Link>
+        )}
       </div>
       <Outlet />
     </>
