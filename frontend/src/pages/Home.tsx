@@ -1,9 +1,7 @@
+import { EventsList } from '@/components/EventsList';
+
 const Home = () => {
-  return (
-    <div>
-      <h1> Welcome to Karp!</h1>
-    </div>
-  );
+  return <EventsList />;
 };
 
 export default Home;

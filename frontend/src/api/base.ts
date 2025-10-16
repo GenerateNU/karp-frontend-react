@@ -4,12 +4,15 @@ export async function makeRequest<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
 ): Promise<T> {
+  const token = localStorage.getItem('auth_token');
+
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_BASE_URL}${path}`,
     {
       method,
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       ...(body && { body: JSON.stringify(body) }),
     }
