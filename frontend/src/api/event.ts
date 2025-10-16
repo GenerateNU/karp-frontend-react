@@ -22,7 +22,7 @@ export async function getAllEvents(): Promise<Event[]> {
 export async function updateEvent(
   eventData: UpdateEventRequest
 ): Promise<Event> {
-  return makeRequest<Event>(`/event/${eventData._id}`, 'PUT', eventData);
+  return makeRequest<Event>(`/event/${eventData.id}`, 'PUT', eventData);
 }
 
 export async function deleteEvent(eventId: string): Promise<void> {

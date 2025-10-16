@@ -7,7 +7,7 @@ export type Location = {
 };
 
 export type Event = {
-  _id?: string;
+  id: string;
   name: string;
   address: string;
   location?: Location;
@@ -27,7 +27,7 @@ export type Event = {
 
 export type CreateEventRequest = Omit<
   Event,
-  | '_id'
+  | 'id'
   | 'created_at'
   | 'status'
   | 'organization_id'
@@ -37,5 +37,5 @@ export type CreateEventRequest = Omit<
 >;
 
 export type UpdateEventRequest = Partial<CreateEventRequest> & {
-  _id: string;
+  id: string;
 };

@@ -57,6 +57,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!nextToken) {
       throw new Error('Login response missing token');
     }
+
+    localStorage.setItem('auth_token', nextToken);
     setToken(nextToken);
 
     try {

@@ -50,7 +50,7 @@ export function useCreateEvent() {
     onSuccess: newEvent => {
       queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
 
-      queryClient.setQueryData(eventKeys.detail(newEvent._id!), newEvent);
+      queryClient.setQueryData(eventKeys.detail(newEvent.id), newEvent);
 
       if (newEvent.organization_id) {
         queryClient.invalidateQueries({
@@ -68,7 +68,7 @@ export function useUpdateEvent() {
     mutationFn: updateEvent,
     onSuccess: updatedEvent => {
       queryClient.setQueryData(
-        eventKeys.detail(updatedEvent._id!),
+        eventKeys.detail(updatedEvent.id!),
         updatedEvent
       );
 

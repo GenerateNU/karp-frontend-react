@@ -9,23 +9,23 @@ import type {
 } from '@/types/user';
 
 export async function getUserProfile(): Promise<AuthUser> {
-  return makeRequest<AuthUser>('/users/me', 'GET');
+  return makeRequest<AuthUser>('/user/me', 'GET');
 }
 
 export async function getVolunteerProfile(): Promise<VolunteerProfile> {
-  return makeRequest<VolunteerProfile>('/volunteers/me', 'GET');
+  return makeRequest<VolunteerProfile>('/volunteer/me', 'GET');
 }
 
 export async function getVendorProfile(): Promise<VendorProfile> {
-  return makeRequest<VendorProfile>('/vendors/me', 'GET');
+  return makeRequest<VendorProfile>('/vendor/me', 'GET');
 }
 
 export async function getOrganizationProfile(): Promise<OrganizationProfile> {
-  return makeRequest<OrganizationProfile>('/organizations/me', 'GET');
+  return makeRequest<OrganizationProfile>('/organization/me', 'GET');
 }
 
 export async function getAdminProfile(): Promise<AdminProfile> {
-  return makeRequest<AdminProfile>('/admins/me', 'GET');
+  return makeRequest<AdminProfile>('/admin/me', 'GET');
 }
 
 export async function getProfileByUserType(
