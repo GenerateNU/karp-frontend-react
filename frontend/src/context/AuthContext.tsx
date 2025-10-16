@@ -7,10 +7,25 @@ import {
   useState,
 } from 'react';
 import { loginApi } from '@/api/auth';
+import { getUserProfile, getProfileByUserType } from '@/api/profile';
+import type {
+  AdminProfile,
+  AuthUser,
+  OrganizationProfile,
+  VolunteerProfile,
+  VendorProfile,
+} from '@/types/user';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
   token: string | null;
+  user: AuthUser | null;
+  userProfile:
+    | VolunteerProfile
+    | VendorProfile
+    | OrganizationProfile
+    | AdminProfile
+    | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 };
@@ -21,6 +36,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem('auth_token');
   });
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [userProfile, setUserProfile] = useState<
+    VolunteerProfile | VendorProfile | OrganizationProfile | AdminProfile | null
+  >(null);
 
   const isAuthenticated = Boolean(token);
 
@@ -39,15 +58,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error('Login response missing token');
     }
     setToken(nextToken);
+
+    try {
+      const userData = await getUserProfile();
+      setUser(userData);
+
+      if (userData.entity_id) {
+        const profile = await getProfileByUserType(userData.user_type);
+        setUserProfile(profile);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+    }
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
+    setUser(null);
+    setUserProfile(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ isAuthenticated, token, login, logout }),
-    [isAuthenticated, token, login, logout]
+    () => ({ isAuthenticated, token, user, userProfile, login, logout }),
+    [isAuthenticated, token, user, userProfile, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
