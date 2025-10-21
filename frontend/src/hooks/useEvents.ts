@@ -6,6 +6,7 @@ import {
   updateEvent,
   deleteEvent,
   getEventsByOrganization,
+  uploadEventImage
 } from '@/api/event';
 
 export const eventKeys = {
