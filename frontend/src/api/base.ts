@@ -1,3 +1,6 @@
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+
+
 export async function makeRequest<T>(
   path: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
@@ -7,7 +10,7 @@ export async function makeRequest<T>(
   const token = localStorage.getItem('auth_token');
 
   const response = await fetch(
-    `${import.meta.env.VITE_BACKEND_BASE_URL}${path}`,
+    `${BASE_URL}${path}`,
     {
       method,
       headers: {

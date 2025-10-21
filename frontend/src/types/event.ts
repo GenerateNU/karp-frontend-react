@@ -23,6 +23,7 @@ export type Event = {
   age_max?: number;
   created_at?: string; // ISO string format
   created_by: string;
+  image_url?: string;
 };
 
 export type CreateEventRequest = Omit<

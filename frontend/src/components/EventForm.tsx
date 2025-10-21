@@ -26,6 +26,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
   });
 
   const createEventMutation = useCreateEvent();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,6 +236,23 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 setFormData(prev => ({ ...prev, keywords }));
               }}
               placeholder="Enter keywords separated by commas"
+              className="bg-white border-gray-300 text-gray-900"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="image" className="text-gray-900">
+              Upload Image
+            </Label>
+            <Input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setImageFile(file);
+              }}
               className="bg-white border-gray-300 text-gray-900"
             />
           </div>
