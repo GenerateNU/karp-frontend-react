@@ -46,8 +46,6 @@ export async function uploadEventImage(
     'GET',
   );
 
-  console.log('Presigned data:', presignedData);
-
   const uploadResponse = await fetch((await presignedData).upload_url, {
     method: 'PUT',
     headers: {
