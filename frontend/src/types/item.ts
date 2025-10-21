@@ -1,13 +1,7 @@
 export interface Item {
   id: string;
   name: string;
-  status:
-    | 'APPROVED'
-    | 'IN_REVIEW'
-    | 'REJECTED'
-    | 'DELETED'
-    | 'ACTIVE'
-    | 'CLAIMED';
+  status: 'APPROVED' | 'IN_REVIEW' | 'REJECTED' | 'DELETED' | 'ACTIVE';
   vendor_id: string;
   time_posted: string;
   expiration: string;

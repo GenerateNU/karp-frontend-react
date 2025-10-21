@@ -43,12 +43,11 @@ export function EventForm({ onSuccess }: EventFormProps) {
     }
 
     try {
-      const newEvent = await createEventMutation.mutateAsync(formData as CreateEventRequest);
+      const newEvent = await createEventMutation.mutateAsync(
+        formData as CreateEventRequest
+      );
       if (imageFile) {
-        const uploadResult = await uploadEventImage(
-          newEvent.id,
-          imageFile
-        );
+        const uploadResult = await uploadEventImage(newEvent.id, imageFile);
         formData.image_url = uploadResult.upload_url;
       }
       alert('Event created successfully!');
@@ -257,7 +256,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
               id="image"
               name="image"
               accept="image/*"
-              onChange={(e) => {
+              onChange={e => {
                 const file = e.target.files?.[0] || null;
                 setImageFile(file);
               }}

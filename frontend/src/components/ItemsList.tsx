@@ -71,9 +71,7 @@ export function ItemsList() {
                             ? 'bg-blue-100 text-blue-800'
                             : item.status === 'REJECTED'
                               ? 'bg-red-100 text-red-800'
-                              : item.status === 'CLAIMED'
-                                ? 'bg-purple-100 text-purple-800'
-                                : 'bg-gray-100 text-gray-800'
+                              : 'bg-gray-100 text-gray-800'
                     }`}
                   >
                     {item.status}

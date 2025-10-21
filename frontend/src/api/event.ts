@@ -38,12 +38,11 @@ export async function getEventsByOrganization(
 export async function uploadEventImage(
   eventId: string,
   imageFile: File
-): Promise<{ upload_url: string;
- }> {
+): Promise<{ upload_url: string }> {
   const filename = encodeURIComponent(imageFile.name);
-  const presignedData = makeRequest<{ upload_url: string, file_url: string }>(
+  const presignedData = makeRequest<{ upload_url: string; file_url: string }>(
     `/event/${eventId}/upload-url?filename=${filename}&filetype=${imageFile.type}`,
-    'GET',
+    'GET'
   );
 
   const uploadResponse = await fetch((await presignedData).upload_url, {
@@ -55,7 +54,9 @@ export async function uploadEventImage(
   });
 
   if (!uploadResponse.ok) {
-    throw new Error(`Failed to upload image to S3: ${uploadResponse.status} ${uploadResponse.statusText}`);
+    throw new Error(
+      `Failed to upload image to S3: ${uploadResponse.status} ${uploadResponse.statusText}`
+    );
   }
 
   // Step 3 — Return the file URL (S3 key)
