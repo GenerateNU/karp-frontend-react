@@ -6,11 +6,13 @@ export interface Item {
   time_posted: string;
   expiration: string;
   price: number;
+  image_url?: string; //?
 }
 
 export interface CreateItemRequest {
   name: string;
   expiration: string;
+  image_url?: string;
 }
 
 export interface UpdateItemRequest {

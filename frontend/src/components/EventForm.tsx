@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { uploadEventImage } from '@/api/event';
+import { uploadImage } from '@/api/utils/image';
 
 interface EventFormProps {
   onSuccess?: () => void;
@@ -47,7 +47,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
         formData as CreateEventRequest
       );
       if (imageFile) {
-        const uploadResult = await uploadEventImage(newEvent.id, imageFile);
+        const uploadResult = await uploadImage("event", newEvent.id, imageFile);
         formData.image_url = uploadResult.upload_url;
       }
       alert('Event created successfully!');
