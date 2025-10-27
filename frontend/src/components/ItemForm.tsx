@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { uploadImage } from '@/api/utils/image';
 
 interface ItemFormProps {
   onSuccess?: () => void;
@@ -17,6 +18,7 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
   });
 
   const createItemMutation = useCreateItem();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,13 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
     }
 
     try {
-      await createItemMutation.mutateAsync(formData as CreateItemRequest);
+      const newItem = await createItemMutation.mutateAsync(
+        formData as CreateItemRequest
+      );
+      if (imageFile) {
+        const uploadResult = await uploadImage("item", newItem.id, imageFile);
+        formData.image_url = uploadResult.upload_url;
+      }
       alert('Item created successfully!');
       onSuccess?.();
     } catch (error) {
@@ -85,6 +93,23 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="image" className="text-gray-900">
+              Upload Image
+            </Label>
+            <Input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={e => {
+                const file = e.target.files?.[0] || null;
+                setImageFile(file);
+              }}
+              className="bg-white border-gray-300 text-gray-900"
+            />
+          </div>
+
           <div className="flex gap-3 pt-4">
             <Button
               type="submit"
@@ -94,6 +119,7 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
               {createItemMutation.isPending ? 'Creating...' : 'Create Item'}
             </Button>
           </div>
+          
         </form>
       </CardContent>
     </Card>
