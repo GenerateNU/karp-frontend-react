@@ -101,7 +101,6 @@ export function OrganizationsList() {
                         )
                       }
                       disabled={updatingId === organization.id}
-                      className="!bg-black !text-white hover:!bg-karp-orange"
                     >
                       {updatingId === organization.id
                         ? 'Deleting...'
@@ -111,7 +110,7 @@ export function OrganizationsList() {
                   {organization.status === 'IN_REVIEW' && (
                     <>
                       <Button
-                        variant="default"
+                        variant="success"
                         size="sm"
                         onClick={() =>
                           handleStatusChange(
@@ -122,7 +121,6 @@ export function OrganizationsList() {
                           )
                         }
                         disabled={updatingId === organization.id}
-                        className="bg-karp-green hover:bg-karp-green/90"
                       >
                         {updatingId === organization.id
                           ? 'Approving...'

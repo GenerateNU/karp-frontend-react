@@ -37,10 +37,22 @@ export const itemApi = {
   },
 
   deactivateItem: async (id: string): Promise<void> => {
-    await makeRequest<void>(`/item/${id}/deactivate`, 'DELETE');
+    await makeRequest<void>(`/item/deactivate/${id}`, 'PUT');
   },
 
   activateItem: async (id: string): Promise<void> => {
-    await makeRequest<void>(`/item/${id}/activate`, 'POST');
+    await makeRequest<void>(`/item/activate/${id}`, 'PUT');
+  },
+
+  editItem: async (
+    id: string,
+    item: {
+      name: string;
+      price: number;
+      expiration: string;
+      status: Item['status'];
+    }
+  ): Promise<void> => {
+    await makeRequest<void>(`/item/edit/${id}`, 'PUT', item);
   },
 };
