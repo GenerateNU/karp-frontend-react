@@ -13,7 +13,7 @@ export function EventsList() {
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">Error loading events</div>;
+    return <div className="p-4 text-karp-orange">Error loading events</div>;
   }
 
   return (
@@ -43,37 +43,39 @@ export function EventsList() {
           {events.map(event => (
             <div
               key={event.id}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300"
+              className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-karp-font">
                     {event.name}
                   </h3>
-                  <p className="text-gray-600">{event.address}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-karp-font/70">{event.address}</p>
+                  <p className="text-sm text-karp-font/60">
                     {new Date(event.start_date_time).toLocaleDateString()} -{' '}
                     {new Date(event.end_date_time).toLocaleDateString()}
                   </p>
                   {event.description && (
-                    <p className="text-gray-700 mt-2">{event.description}</p>
+                    <p className="text-karp-font/80 mt-2">
+                      {event.description}
+                    </p>
                   )}
                 </div>
                 <div className="text-right">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
                       event.status === 'published'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-karp-green/20 text-karp-green'
                         : event.status === 'draft'
-                          ? 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-karp-yellow/20 text-karp-yellow'
                           : event.status === 'cancelled'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-karp-orange/20 text-karp-orange'
+                            : 'bg-karp-font/10 text-karp-font'
                     }`}
                   >
                     {event.status}
                   </span>
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="mt-2 text-sm text-karp-font/70">
                     <p>Max Volunteers: {event.max_volunteers}</p>
                     <p>Coins: {event.coins}</p>
                   </div>
@@ -83,7 +85,7 @@ export function EventsList() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-karp-font/70">
           <p>No events found. Create your first event!</p>
         </div>
       )}

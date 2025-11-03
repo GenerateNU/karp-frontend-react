@@ -1,15 +1,52 @@
-import { useOrganizations } from '@/hooks/useOrganizations';
+import { useState } from 'react';
+import {
+  useOrganizations,
+  useUpdateOrganization,
+} from '@/hooks/useOrganizations';
+import { Button } from '@/components/ui/button';
+import type { OrganizationStatus } from '@/types/organization';
 
 export function OrganizationsList() {
   const { data: organizations, isLoading, error } = useOrganizations();
+  const updateOrganization = useUpdateOrganization();
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const handleStatusChange = async (
+    orgId: string,
+    currentName: string,
+    currentDescription: string,
+    newStatus: OrganizationStatus
+  ) => {
+    setUpdatingId(orgId);
+    try {
+      await updateOrganization.mutateAsync({
+        id: orgId,
+        data: {
+          name: currentName,
+          description: currentDescription,
+          status: newStatus,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to update organization status:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   if (isLoading) {
     return <div className="p-4">Loading organizations...</div>;
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">Error loading organizations</div>;
+    return (
+      <div className="p-4 text-karp-orange">Error loading organizations</div>
+    );
   }
+
+  // Filter out deleted organizations
+  const activeOrganizations =
+    organizations?.filter(org => org.status !== 'DELETED') || [];
 
   return (
     <div className="p-4">
@@ -17,50 +54,106 @@ export function OrganizationsList() {
         <h1 className="text-2xl font-bold text-foreground">Organizations</h1>
       </div>
 
-      {organizations && organizations.length > 0 ? (
+      {activeOrganizations.length > 0 ? (
         <div className="grid gap-4">
-          {organizations.map(organization => (
+          {activeOrganizations.map(organization => (
             <div
               key={organization.id}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300"
+              className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50"
             >
               <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {organization.name}
-                  </h3>
-                  <p className="text-gray-600">{organization.address}</p>
-                  <p className="text-gray-600">{organization.email}</p>
-                  <p className="text-gray-600">{organization.phone}</p>
-                  {organization.website && (
-                    <p className="text-blue-600 mt-2">
-                      <a
-                        href={organization.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {organization.website}
-                      </a>
-                    </p>
-                  )}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-karp-font">
+                      {organization.name}
+                    </h3>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        organization.status === 'APPROVED'
+                          ? 'bg-karp-green/20 text-karp-green'
+                          : organization.status === 'IN_REVIEW'
+                            ? 'bg-karp-yellow/20 text-karp-yellow'
+                            : organization.status === 'REJECTED'
+                              ? 'bg-karp-orange/20 text-karp-orange'
+                              : 'bg-karp-font/10 text-karp-font'
+                      }`}
+                    >
+                      {organization.status}
+                    </span>
+                  </div>
                   {organization.description && (
-                    <p className="text-gray-700 mt-2">
+                    <p className="text-karp-font/80 mt-2">
                       {organization.description}
                     </p>
                   )}
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">
-                    Created:{' '}
-                    {new Date(organization.created_at).toLocaleDateString()}
-                  </p>
+                <div className="ml-4 flex flex-col gap-2">
+                  {organization.status === 'APPROVED' && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() =>
+                        handleStatusChange(
+                          organization.id,
+                          organization.name,
+                          organization.description,
+                          'DELETED'
+                        )
+                      }
+                      disabled={updatingId === organization.id}
+                      className="!bg-black !text-white hover:!bg-karp-orange"
+                    >
+                      {updatingId === organization.id
+                        ? 'Deleting...'
+                        : 'Delete'}
+                    </Button>
+                  )}
+                  {organization.status === 'IN_REVIEW' && (
+                    <>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() =>
+                          handleStatusChange(
+                            organization.id,
+                            organization.name,
+                            organization.description,
+                            'APPROVED'
+                          )
+                        }
+                        disabled={updatingId === organization.id}
+                        className="bg-karp-green hover:bg-karp-green/90"
+                      >
+                        {updatingId === organization.id
+                          ? 'Approving...'
+                          : 'Approve'}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          handleStatusChange(
+                            organization.id,
+                            organization.name,
+                            organization.description,
+                            'REJECTED'
+                          )
+                        }
+                        disabled={updatingId === organization.id}
+                      >
+                        {updatingId === organization.id
+                          ? 'Rejecting...'
+                          : 'Reject'}
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-karp-font/70">
           <p>No organizations found.</p>
         </div>
       )}

@@ -11,7 +11,7 @@ export function UserProfile() {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">User Profile</h2>
 
-      <div className="bg-gray-50 p-4 rounded-lg mb-4">
+      <div className="bg-karp-font/5 p-4 rounded-lg mb-4">
         <h3 className="font-semibold mb-2">Basic Info</h3>
         <p>
           <strong>Name:</strong> {user.first_name} {user.last_name}
@@ -31,7 +31,7 @@ export function UserProfile() {
       </div>
 
       {userProfile && (
-        <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="bg-karp-primary/10 p-4 rounded-lg">
           <h3 className="font-semibold mb-2">Detailed Profile</h3>
           <pre className="text-sm overflow-auto">
             {JSON.stringify(userProfile, null, 2)}

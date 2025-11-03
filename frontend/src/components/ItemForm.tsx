@@ -33,7 +33,7 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
         formData as CreateItemRequest
       );
       if (imageFile) {
-        const uploadResult = await uploadImage("item", newItem.id, imageFile);
+        const uploadResult = await uploadImage('item', newItem.id, imageFile);
         formData.image_url = uploadResult.upload_url;
       }
       alert('Item created successfully!');
@@ -57,14 +57,14 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
   };
 
   return (
-    <Card className="bg-white">
-      <CardHeader className="bg-white">
-        <CardTitle className="text-gray-900">Create New Item</CardTitle>
+    <Card className="bg-karp-background">
+      <CardHeader className="bg-karp-background">
+        <CardTitle className="text-karp-font">Create New Item</CardTitle>
       </CardHeader>
-      <CardContent className="bg-white">
+      <CardContent className="bg-karp-background">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-900">
+            <Label htmlFor="name" className="text-karp-font">
               Item Name *
             </Label>
             <Input
@@ -74,12 +74,12 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
               onChange={handleChange}
               required
               placeholder="Enter item name"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="expiration" className="text-gray-900">
+            <Label htmlFor="expiration" className="text-karp-font">
               Expiration Date *
             </Label>
             <Input
@@ -89,12 +89,12 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
               value={formData.expiration}
               onChange={handleChange}
               required
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-gray-900">
+            <Label htmlFor="image" className="text-karp-font">
               Upload Image
             </Label>
             <Input
@@ -106,7 +106,7 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
                 const file = e.target.files?.[0] || null;
                 setImageFile(file);
               }}
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
@@ -119,7 +119,6 @@ export function ItemForm({ onSuccess }: ItemFormProps) {
               {createItemMutation.isPending ? 'Creating...' : 'Create Item'}
             </Button>
           </div>
-          
         </form>
       </CardContent>
     </Card>

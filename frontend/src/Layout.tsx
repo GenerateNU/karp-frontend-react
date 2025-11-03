@@ -32,7 +32,7 @@ const Layout = () => {
       <div
         style={{
           padding: 12,
-          borderBottom: '1px solid #eee',
+          borderBottom: '1px solid rgba(29, 15, 72, 0.2)',
           marginBottom: 16,
         }}
       >
