@@ -7,7 +7,11 @@ export const buttonVariants = cva(
       variant: {
         default: '!bg-karp-primary !text-white hover:!opacity-90',
         destructive:
-          'bg-karp-orange text-white hover:bg-karp-orange/90 focus-visible:ring-karp-orange',
+          '!bg-karp-orange !text-white hover:!bg-karp-orange/90 focus-visible:ring-karp-orange',
+        success:
+          '!bg-karp-green !text-white hover:!bg-karp-green/90 focus-visible:ring-karp-green',
+        warning:
+          '!bg-karp-yellow !text-karp-font hover:!bg-karp-yellow/90 focus-visible:ring-karp-yellow',
         outline:
           'border border-karp-font/20 bg-karp-background shadow-sm hover:bg-karp-font/5 hover:text-karp-font',
         secondary: 'bg-karp-yellow text-karp-font hover:bg-karp-yellow/90',
