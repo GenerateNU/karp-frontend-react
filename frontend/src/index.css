@@ -110,12 +110,6 @@ button:focus-visible {
   --radius-xl: calc(var(--radius) + 4px);
 
   /* KARP Custom Colors */
-  --color-karp-background: var(--karp-background);
-  --color-karp-font: var(--karp-font);
-  --color-karp-primary: var(--karp-primary);
-  --color-karp-orange: var(--karp-orange);
-  --color-karp-yellow: var(--karp-yellow);
-  --color-karp-green: var(--karp-green);
 
   /* Theme colors */
   --color-background: var(--background);
