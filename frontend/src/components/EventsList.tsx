@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useEvents } from '@/hooks/useEvents';
+import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,37 @@ import { Button } from '@/components/ui/button';
 export function EventsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { data: events, isLoading, error } = useEvents();
+  const updateEvent = useUpdateEvent();
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [coinValue, setCoinValue] = useState<string>('');
+
+  function sendStatusUpdate(
+    eventId: string,
+    current: any,
+    newStatus: 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED'
+  ) {
+    updateEvent.mutate({
+      id: eventId,
+      coins: current.coins,
+      name: current.name,
+      address: current.address,
+      start_date_time: current.start_date_time,
+      end_date_time: current.end_date_time,
+      max_volunteers: current.max_volunteers,
+      description: current.description,
+      keywords: current.keywords,
+      age_min: current.age_min,
+      age_max: current.age_max,
+      status: newStatus.toLowerCase() as never,
+    } as never);
+  }
 
   if (isLoading) {
     return <div className="p-4">Loading events...</div>;
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">Error loading events</div>;
+    return <div className="p-4 text-karp-orange">Error loading events</div>;
   }
 
   return (
@@ -40,50 +64,91 @@ export function EventsList() {
 
       {events && events.length > 0 ? (
         <div className="grid gap-4">
-          {events.map(event => (
-            <div
-              key={event.id}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {event.name}
-                  </h3>
-                  <p className="text-gray-600">{event.address}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(event.start_date_time).toLocaleDateString()} -{' '}
-                    {new Date(event.end_date_time).toLocaleDateString()}
-                  </p>
-                  {event.description && (
-                    <p className="text-gray-700 mt-2">{event.description}</p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      event.status === 'published'
-                        ? 'bg-green-100 text-green-800'
-                        : event.status === 'draft'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : event.status === 'cancelled'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {event.status}
-                  </span>
-                  <div className="mt-2 text-sm text-gray-600">
-                    <p>Max Volunteers: {event.max_volunteers}</p>
-                    <p>Coins: {event.coins}</p>
+          {events.map(event => {
+            const normalizedStatus = String(event.status || '').toLowerCase();
+            return (
+              <div
+                key={event.id}
+                className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-karp-font">
+                      {event.name}
+                    </h3>
+                    <p className="text-karp-font/70">{event.address}</p>
+                    <p className="text-sm text-karp-font/60">
+                      {new Date(event.start_date_time).toLocaleDateString()} -{' '}
+                      {new Date(event.end_date_time).toLocaleDateString()}
+                    </p>
+                    {event.description && (
+                      <p className="text-karp-font/80 mt-2">
+                        {event.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        normalizedStatus === 'published'
+                          ? 'bg-karp-green/20 text-karp-green'
+                          : normalizedStatus === 'draft'
+                            ? 'bg-karp-yellow/20 text-karp-yellow'
+                            : normalizedStatus === 'cancelled'
+                              ? 'bg-karp-orange/20 text-karp-orange'
+                              : 'bg-karp-font/10 text-karp-font'
+                      }`}
+                    >
+                      {event.status}
+                    </span>
+                    <div className="mt-2 text-sm text-karp-font/70">
+                      <p>Max Volunteers: {event.max_volunteers}</p>
+                      <p>Coins: {event.coins}</p>
+                    </div>
+                    <div className="mt-3 flex gap-2 justify-end">
+                      {normalizedStatus !== 'published' && (
+                        <Button
+                          size="sm"
+                          variant="success"
+                          onClick={() =>
+                            sendStatusUpdate(event.id, event, 'PUBLISHED')
+                          }
+                          disabled={updateEvent.isPending}
+                        >
+                          {updateEvent.isPending ? 'Publishing...' : 'Publish'}
+                        </Button>
+                      )}
+                      {normalizedStatus !== 'cancelled' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() =>
+                            sendStatusUpdate(event.id, event, 'CANCELLED')
+                          }
+                          disabled={updateEvent.isPending}
+                        >
+                          {updateEvent.isPending ? 'Cancelling...' : 'Cancel'}
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="warning"
+                        onClick={() => {
+                          setEditingEventId(event.id);
+                          setCoinValue(String(event.coins ?? 0));
+                        }}
+                      >
+                        Edit Coins
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-karp-font/70">
           <p>No events found. Create your first event!</p>
         </div>
       )}
@@ -95,6 +160,49 @@ export function EventsList() {
         size="2xl"
       >
         <EventForm onSuccess={() => setShowCreateModal(false)} />
+      </Modal>
+
+      <Modal
+        isOpen={!!editingEventId}
+        onClose={() => setEditingEventId(null)}
+        title="Edit Event Coins"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-karp-font">
+            Coins
+          </label>
+          <input
+            type="number"
+            min={0}
+            className="w-full border border-karp-font/20 rounded px-3 py-2 bg-karp-background text-karp-font"
+            value={coinValue}
+            onChange={e => setCoinValue(e.target.value)}
+          />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="ghost" onClick={() => setEditingEventId(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const ev = events?.find(e => e.id === editingEventId);
+                if (!ev) return;
+                updateEvent.mutate(
+                  {
+                    id: ev.id,
+                    coins: Number(coinValue),
+                  } as never,
+                  {
+                    onSuccess: () => setEditingEventId(null),
+                  }
+                );
+              }}
+              disabled={updateEvent.isPending}
+            >
+              {updateEvent.isPending ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
