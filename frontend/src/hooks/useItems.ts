@@ -51,29 +51,6 @@ export function useUpdateItem() {
   });
 }
 
-export function useEditItemCoins() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: {
-        name: string;
-        price: number;
-        expiration: string;
-        status: string;
-      };
-    }) => itemApi.editItem(id, payload as never),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-      queryClient.invalidateQueries({ queryKey: ['item', id] });
-    },
-  });
-}
-
 export function useDeactivateItem() {
   const queryClient = useQueryClient();
 

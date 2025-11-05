@@ -47,7 +47,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
         formData as CreateEventRequest
       );
       if (imageFile) {
-        const uploadResult = await uploadImage('event', newEvent.id, imageFile);
+        const uploadResult = await uploadImage("event", newEvent.id, imageFile);
         formData.image_url = uploadResult.upload_url;
       }
       alert('Event created successfully!');
@@ -72,14 +72,14 @@ export function EventForm({ onSuccess }: EventFormProps) {
   };
 
   return (
-    <Card className="bg-karp-background">
-      <CardHeader className="bg-karp-background">
-        <CardTitle className="text-karp-font">Create New Event</CardTitle>
+    <Card className="bg-white">
+      <CardHeader className="bg-white">
+        <CardTitle className="text-gray-900">Create New Event</CardTitle>
       </CardHeader>
-      <CardContent className="bg-karp-background">
+      <CardContent className="bg-white">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-karp-font">
+            <Label htmlFor="name" className="text-gray-900">
               Event Name *
             </Label>
             <Input
@@ -89,12 +89,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               required
               placeholder="Enter event name"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address" className="text-karp-font">
+            <Label htmlFor="address" className="text-gray-900">
               Address *
             </Label>
             <Input
@@ -104,13 +104,13 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               required
               placeholder="Enter event address"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="start_date_time" className="text-karp-font">
+              <Label htmlFor="start_date_time" className="text-gray-900">
                 Start Date & Time *
               </Label>
               <Input
@@ -120,12 +120,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 value={formData.start_date_time}
                 onChange={handleChange}
                 required
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end_date_time" className="text-karp-font">
+              <Label htmlFor="end_date_time" className="text-gray-900">
                 End Date & Time *
               </Label>
               <Input
@@ -135,14 +135,14 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 value={formData.end_date_time}
                 onChange={handleChange}
                 required
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="max_volunteers" className="text-karp-font">
+              <Label htmlFor="max_volunteers" className="text-gray-900">
                 Max Volunteers
               </Label>
               <Input
@@ -153,12 +153,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="coins" className="text-karp-font">
+              <Label htmlFor="coins" className="text-gray-900">
                 Coins
               </Label>
               <Input
@@ -169,14 +169,14 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="age_min" className="text-karp-font">
+              <Label htmlFor="age_min" className="text-gray-900">
                 Minimum Age
               </Label>
               <Input
@@ -187,12 +187,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="age_max" className="text-karp-font">
+              <Label htmlFor="age_max" className="text-gray-900">
                 Maximum Age
               </Label>
               <Input
@@ -203,13 +203,13 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-karp-font">
+            <Label htmlFor="description" className="text-gray-900">
               Description
             </Label>
             <Textarea
@@ -219,12 +219,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               rows={4}
               placeholder="Enter event description"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="keywords" className="text-karp-font">
+            <Label htmlFor="keywords" className="text-gray-900">
               Keywords
             </Label>
             <Input
@@ -243,12 +243,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 setFormData(prev => ({ ...prev, keywords }));
               }}
               placeholder="Enter keywords separated by commas"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-karp-font">
+            <Label htmlFor="image" className="text-gray-900">
               Upload Image
             </Label>
             <Input
@@ -260,7 +260,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 const file = e.target.files?.[0] || null;
                 setImageFile(file);
               }}
-              className="bg-karp-background border-karp-font/20 text-karp-font"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
 

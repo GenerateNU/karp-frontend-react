@@ -9,64 +9,54 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: #1d0f48;
-  background-color: #fffdfa;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --radius: 0.625rem;
-
-  /* KARP Color Scheme */
-  --karp-background: #fffdfa;
-  --karp-font: #1d0f48;
-  --karp-primary: #34a5e4;
-  --karp-orange: #f7581f;
-  --karp-yellow: #feb83c;
-  --karp-green: #2b5213;
-
-  /* Theme variables using KARP colors */
-  --background: var(--karp-background);
-  --foreground: var(--karp-font);
-  --card: var(--karp-background);
-  --card-foreground: var(--karp-font);
-  --popover: var(--karp-background);
-  --popover-foreground: var(--karp-font);
-  --primary: var(--karp-primary);
-  --primary-foreground: #ffffff;
-  --secondary: var(--karp-orange);
-  --secondary-foreground: #ffffff;
-  --muted: #f5f5f5;
-  --muted-foreground: #6b7280;
-  --accent: var(--karp-yellow);
-  --accent-foreground: var(--karp-font);
-  --destructive: var(--karp-orange);
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: var(--karp-primary);
-  --chart-1: var(--karp-primary);
-  --chart-2: var(--karp-orange);
-  --chart-3: var(--karp-yellow);
-  --chart-4: var(--karp-green);
-  --chart-5: #6b7280;
-  --sidebar: var(--karp-background);
-  --sidebar-foreground: var(--karp-font);
-  --sidebar-primary: var(--karp-primary);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--karp-background);
-  --sidebar-accent-foreground: var(--karp-font);
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: var(--karp-primary);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 a {
   font-weight: 500;
-  color: var(--karp-primary);
+  color: #646cff;
   text-decoration: inherit;
 }
 a:hover {
-  color: var(--karp-orange);
+  color: #535bf2;
 }
 
 body {
@@ -108,16 +98,6 @@ button:focus-visible {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-
-  /* KARP Custom Colors */
-  --color-karp-background: var(--karp-background);
-  --color-karp-font: var(--karp-font);
-  --color-karp-primary: var(--karp-primary);
-  --color-karp-orange: var(--karp-orange);
-  --color-karp-yellow: var(--karp-yellow);
-  --color-karp-green: var(--karp-green);
-
-  /* Theme colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -155,9 +135,9 @@ button:focus-visible {
 
 @layer base {
   * {
-    @apply border-karp-font/20 outline-karp-primary/50;
+    @apply border-gray-300 outline-gray-500/50;
   }
   body {
-    @apply bg-karp-background text-karp-font;
+    @apply bg-white text-gray-900;
   }
 }

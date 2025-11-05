@@ -14,14 +14,6 @@ const Layout = () => {
     return ['VENDOR', 'ADMIN'].includes(userType);
   };
 
-  const canAccessOrganizations = (userType: UserType) => {
-    return ['ADMIN'].includes(userType);
-  };
-
-  const canAccessVolunteers = (userType: UserType) => {
-    return ['ADMIN'].includes(userType);
-  };
-
   function handleLogout() {
     logout();
     navigate('/login', { replace: true });
@@ -32,7 +24,7 @@ const Layout = () => {
       <div
         style={{
           padding: 12,
-          borderBottom: '1px solid rgba(29, 15, 72, 0.2)',
+          borderBottom: '1px solid #eee',
           marginBottom: 16,
         }}
       >
@@ -47,16 +39,6 @@ const Layout = () => {
         {user && canAccessItems(user.user_type) && (
           <Link to="/items" style={{ marginRight: 12 }}>
             Items
-          </Link>
-        )}
-        {user && canAccessOrganizations(user.user_type) && (
-          <Link to="/organizations" style={{ marginRight: 12 }}>
-            Organizations
-          </Link>
-        )}
-        {user && canAccessVolunteers(user.user_type) && (
-          <Link to="/volunteers" style={{ marginRight: 12 }}>
-            Volunteers
           </Link>
         )}
         {isAuthenticated && (

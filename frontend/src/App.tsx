@@ -3,8 +3,6 @@ import Layout from './Layout';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import Items from './pages/Items';
-import Organizations from './pages/Organizations';
-import Volunteers from './pages/Volunteers';
 import Login from './pages/Login';
 import RequireAuth from './components/RequireAuth';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -31,22 +29,6 @@ function App() {
               element={
                 <ProtectedRoute allowedUserTypes={['VENDOR', 'ADMIN']}>
                   <Items />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="organizations"
-              element={
-                <ProtectedRoute allowedUserTypes={['ADMIN']}>
-                  <Organizations />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="volunteers"
-              element={
-                <ProtectedRoute allowedUserTypes={['ADMIN']}>
-                  <Volunteers />
                 </ProtectedRoute>
               }
             />

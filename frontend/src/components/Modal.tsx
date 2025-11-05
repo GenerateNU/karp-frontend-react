@@ -32,8 +32,8 @@ export function Modal({
     <ReactModal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className={`bg-karp-background rounded-xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden`}
-      overlayClassName="fixed inset-0 bg-karp-font/50 flex items-center justify-center z-50 p-4"
+      className={`bg-white rounded-xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] overflow-hidden`}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={true}
       preventScroll={true}
@@ -44,7 +44,7 @@ export function Modal({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(29, 15, 72, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
@@ -64,17 +64,17 @@ export function Modal({
           maxHeight: '90vh',
           overflow: 'hidden',
           outline: 'none',
-          backgroundColor: '#fffdfa',
+          backgroundColor: 'white',
         },
       }}
     >
-      <div className="flex flex-col h-full bg-karp-background">
-        <div className="sticky top-0 bg-karp-background border-b border-karp-font/20 px-6 py-4 rounded-t-xl">
+      <div className="flex flex-col h-full bg-white">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-karp-font">{title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
             <button
               onClick={onClose}
-              className="text-karp-font/60 hover:text-karp-font transition-colors p-1"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
               aria-label="Close modal"
             >
               <svg
@@ -93,9 +93,7 @@ export function Modal({
             </button>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-6 bg-karp-background">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto p-6 bg-white">{children}</div>
       </div>
     </ReactModal>
   );
