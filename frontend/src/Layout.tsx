@@ -17,8 +17,13 @@ const Layout = () => {
   const canAccessOrganizations = (userType: UserType) =>
     ['ADMIN'].includes(userType);
 
-  const canAccessVolunteers = (userType: UserType) =>
-    ['ADMIN'].includes(userType);
+  const canAccessVolunteers = (userType: UserType) => {
+    return ['ADMIN'].includes(userType);
+  };
+
+  const canAccessAchievements = (userType: UserType) => {
+    return ['ADMIN'].includes(userType);
+  };
 
   function handleLogout() {
     logout();
@@ -41,93 +46,37 @@ const Layout = () => {
       <aside
         style={{
           position: 'fixed',
-          left: 0,
           top: 0,
-          height: '100vh',
-          width: SIDEBAR_WIDTH,
-          padding: '20px 12px',
-          borderRight: '1px solid rgba(29, 15, 72, 0.2)',
-          backgroundColor: 'var(--karp-background)',
+          left: 0,
+          right: 0,
+          zIndex: 50,
           display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          zIndex: 1000,
-          boxSizing: 'border-box',
-          overflowY: 'auto',
-          overflowX: 'hidden',
+          alignItems: 'center',
+          gap: 20,
+          padding: 12,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderBottom: '1px solid rgba(29, 15, 72, 0.2)',
+          minWidth: '1100px',
         }}
       >
-        <Link
-          to="/"
-          style={linkStyle}
-          onMouseEnter={e => {
-            e.currentTarget.style.backgroundColor = 'rgba(52, 165, 228, 0.1)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }}
-        >
-          Home
-        </Link>
-
+        <Link to="/">Home</Link>
         {user && canAccessEvents(user.user_type) && (
-          <Link
-            to="/events"
-            style={linkStyle}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = 'rgba(52, 165, 228, 0.1)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Events
-          </Link>
+          <Link to="/events?status=APPROVED">Events</Link>
         )}
 
         {user && canAccessItems(user.user_type) && (
-          <Link
-            to="/items"
-            style={linkStyle}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = 'rgba(52, 165, 228, 0.1)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Items
-          </Link>
+          <Link to="/items">Items</Link>
         )}
 
         {user && canAccessOrganizations(user.user_type) && (
-          <Link
-            to="/organizations"
-            style={linkStyle}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = 'rgba(52, 165, 228, 0.1)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Organizations
-          </Link>
+          <Link to="/organizations">Organizations</Link>
         )}
 
         {user && canAccessVolunteers(user.user_type) && (
-          <Link
-            to="/volunteers"
-            style={linkStyle}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = 'rgba(52, 165, 228, 0.1)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Volunteers
-          </Link>
+          <Link to="/volunteers">Volunteers</Link>
+        )}
+        {user && canAccessAchievements(user.user_type) && (
+          <Link to="/achievements">Achievements</Link>
         )}
 
         {isAuthenticated && (
@@ -148,21 +97,11 @@ const Layout = () => {
             </Link>
           </div>
         )}
-      </aside>
-
-      <main
-        style={{
-          marginLeft: SIDEBAR_WIDTH,
-          flex: 1,
-          padding: '24px',
-          minWidth: 0,
-          maxWidth: '1100px', // page width smaller
-          width: '100%',
-        }}
-      >
-        <Outlet />
-      </main>
-    </div>
+      </div>
+      {/* spacer to offset fixed header height */}
+      <div style={{ height: 48 }} />
+      <Outlet />
+    </>
   );
 };
 

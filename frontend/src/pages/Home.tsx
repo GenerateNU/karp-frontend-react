@@ -5,11 +5,14 @@ const Home = () => {
 
   return (
     <div className="p-4">
+      <div className="sticky top-[48px] z-30 -mx-4 px-4 py-3 bg-karp-background/95 supports-[backdrop-filter]:bg-karp-background/80 backdrop-blur border-b border-karp-font/10">
+        <div className="mx-auto w-full min-w-[1100px]">
+          <h1 className="text-4xl font-bold text-karp-font text-center">
+            Welcome to Karp
+          </h1>
+        </div>
+      </div>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-karp-font mb-6 text-center">
-          Welcome to Karp
-        </h1>
-
         {/* {isLoading && (
           <div className="text-center py-8 text-karp-font/70">
             Loading admins...

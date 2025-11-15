@@ -5,6 +5,7 @@ import Events from './pages/Events';
 import Items from './pages/Items';
 import Organizations from './pages/Organizations';
 import Volunteers from './pages/Volunteers';
+import Achievements from './pages/Achievements';
 import Login from './pages/Login';
 import UserTypeSelection from './pages/UserTypeSelection';
 import SignUp from './pages/SignUp';
@@ -53,6 +54,14 @@ function App() {
               element={
                 <ProtectedRoute allowedUserTypes={['ADMIN']}>
                   <Volunteers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="achievements"
+              element={
+                <ProtectedRoute allowedUserTypes={['ADMIN']}>
+                  <Achievements />
                 </ProtectedRoute>
               }
             />

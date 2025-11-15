@@ -1,4 +1,10 @@
-export type Status = 'draft' | 'published' | 'cancelled' | 'completed';
+export type EventStatus =
+  | 'PUBLISHED'
+  | 'CANCELLED'
+  | 'DRAFT'
+  | 'DELETED'
+  | 'APPROVED'
+  | 'REJECTED';
 
 export type Location = {
   latitude: number;
@@ -14,7 +20,7 @@ export type Event = {
   start_date_time: string; // ISO string format
   end_date_time: string; // ISO string format
   organization_id: string;
-  status: Status;
+  status: EventStatus;
   max_volunteers: number;
   manual_difficulty_coefficient: number;
   coins: number;
@@ -31,7 +37,6 @@ export type CreateEventRequest = Omit<
   Event,
   | 'id'
   | 'created_at'
-  | 'status'
   | 'organization_id'
   | 'created_by'
   | 'location'

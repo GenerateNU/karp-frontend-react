@@ -9,15 +9,23 @@ import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
+import type { ItemStatus } from '@/types/item';
 
 export function ItemsList() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const status = (searchParams.get('status') as ItemStatus) || 'APPROVED';
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: items, isLoading, error } = useItems();
+  const { data: items, isLoading, error } = useItems(status);
   const activateItem = useActivateItem();
   const deactivateItem = useDeactivateItem();
   const editItemCoins = useEditItemCoins();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
+  const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+  const [updatingAction, setUpdatingAction] = useState<
+    'activate' | 'deactivate' | null
+  >(null);
 
   const { user } = useAuth();
   const isAdmin = user?.user_type === 'ADMIN';
@@ -30,30 +38,64 @@ export function ItemsList() {
     return <div className="p-4 text-karp-orange">Error loading items</div>;
   }
 
+  const anyPending = activateItem.isPending || deactivateItem.isPending;
+
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-karp-font">Items</h1>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Create Item
-        </Button>
+      <div className="fixed top-[48px] left-0 right-0 z-30 px-4 md:px-8 py-3 bg-karp-background/95 supports-[backdrop-filter]:bg-karp-background/80 backdrop-blur border-b border-karp-font/10">
+        <div className="mx-auto w-full min-w-[1100px]">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-foreground">
+              {status.toLowerCase().charAt(0).toUpperCase() +
+                status.toLowerCase().slice(1)}{' '}
+              Items
+            </h1>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Create Item
+            </Button>
+          </div>
+          <div className="mt-3 flex gap-2 flex-nowrap">
+            {[
+              { label: 'Active', value: 'ACTIVE' },
+              { label: 'Approved', value: 'APPROVED' },
+              { label: 'Published', value: 'PUBLISHED' },
+              { label: 'Draft', value: 'DRAFT' },
+              { label: 'Rejected', value: 'REJECTED' },
+              { label: 'Deleted', value: 'DELETED' },
+            ].map(tab => {
+              const isActive = status === tab.value;
+              return (
+                <Button
+                  key={tab.value}
+                  variant={isActive ? 'default' : 'outline'}
+                  onClick={() => setSearchParams({ status: tab.value })}
+                  className="w-full flex-1"
+                >
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       </div>
+      {/* spacer to offset the fixed title bar */}
+      <div style={{ height: 110 }} />
 
       {items && items.length > 0 ? (
-        <div className="grid gap-4">
+        <div className="mx-auto w-full min-w-[1100px] grid gap-4">
           {items.map(item => (
             <div
               key={item.id}
@@ -79,13 +121,11 @@ export function ItemsList() {
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
                       item.status === 'ACTIVE'
                         ? 'bg-karp-green/20 text-karp-green'
-                        : item.status === 'IN_REVIEW'
-                          ? 'bg-karp-yellow/20 text-karp-yellow'
-                          : item.status === 'APPROVED'
-                            ? 'bg-karp-primary/20 text-karp-primary'
-                            : item.status === 'REJECTED'
-                              ? 'bg-karp-orange/20 text-karp-orange'
-                              : 'bg-karp-font/10 text-karp-font'
+                        : item.status === 'APPROVED'
+                          ? 'bg-karp-primary/20 text-karp-primary'
+                          : item.status === 'REJECTED'
+                            ? 'bg-karp-orange/20 text-karp-orange'
+                            : 'bg-karp-font/10 text-karp-font'
                     }`}
                   >
                     {item.status}
@@ -98,19 +138,43 @@ export function ItemsList() {
                       <Button
                         size="sm"
                         variant="success"
-                        onClick={() => activateItem.mutate(item.id)}
-                        disabled={activateItem.isPending}
+                        onClick={() => {
+                          setUpdatingItemId(item.id);
+                          setUpdatingAction('activate');
+                          activateItem.mutate(item.id, {
+                            onSettled: () => {
+                              setUpdatingItemId(null);
+                              setUpdatingAction(null);
+                            },
+                          });
+                        }}
+                        disabled={anyPending}
                       >
-                        {activateItem.isPending ? 'Activating...' : 'Activate'}
+                        {anyPending &&
+                        updatingItemId === item.id &&
+                        updatingAction === 'activate'
+                          ? 'Activating...'
+                          : 'Activate'}
                       </Button>
                     ) : (
                       <Button
                         size="sm"
                         variant="destructive"
-                        onClick={() => deactivateItem.mutate(item.id)}
-                        disabled={deactivateItem.isPending}
+                        onClick={() => {
+                          setUpdatingItemId(item.id);
+                          setUpdatingAction('deactivate');
+                          deactivateItem.mutate(item.id, {
+                            onSettled: () => {
+                              setUpdatingItemId(null);
+                              setUpdatingAction(null);
+                            },
+                          });
+                        }}
+                        disabled={anyPending}
                       >
-                        {deactivateItem.isPending
+                        {anyPending &&
+                        updatingItemId === item.id &&
+                        updatingAction === 'deactivate'
                           ? 'Deactivating...'
                           : 'Deactivate'}
                       </Button>
@@ -123,6 +187,7 @@ export function ItemsList() {
                           setEditingItemId(item.id);
                           setCoinValue(String(item.price ?? 0));
                         }}
+                        disabled={anyPending}
                       >
                         Edit Coins
                       </Button>
@@ -135,7 +200,7 @@ export function ItemsList() {
         </div>
       ) : (
         <div className="text-center py-8 text-karp-font/70">
-          <p>No items found. Create your first item!</p>
+          <p>No items found</p>
         </div>
       )}
 
