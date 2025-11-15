@@ -7,7 +7,7 @@ const Home = () => {
     <div className="p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-karp-font mb-6 text-center">
-          Welcome to KARP
+          Welcome to Karp
         </h1>
 
         {isLoading && (
