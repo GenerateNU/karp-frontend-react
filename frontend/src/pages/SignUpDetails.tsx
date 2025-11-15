@@ -5,27 +5,48 @@ import type { UserType } from '@/types/user';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { UserIcon } from '@/components/icons/UserIcon';
 import { FishIcon } from '@/components/icons/FishIcon';
-import { signupApi } from '@/api/auth';
 
-const SignUp = () => {
+const VENDOR_INDUSTRIES = [
+  'Food & Sweets',
+  'Flowers & Plants',
+  'Jewelry & Accessories',
+  'Toys & Kids Gifts',
+  'Home & Lifestyle',
+  'Wellness & Self-Care',
+  'Tech & Gadgets',
+  'Local / Artisan',
+] as const;
+
+const ORGANIZATION_TYPES = [
+  'Nonprofit',
+  'Education',
+  'Youth Services',
+  'Senior Services',
+  'Shelter / Housing',
+  'Food Assistance',
+  'Animal Services',
+  'Environmental',
+  'Healthcare',
+  'Religious',
+  'Arts & Culture',
+  'Government Program',
+] as const;
+
+const SignUpDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const formData = location.state as {
     userType?: UserType;
-    industryType?: string;
-    description?: string;
-    address?: string;
   };
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [industryType, setIndustryType] = useState('');
+  const [description, setDescription] = useState('');
+  const [address, setAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Redirect to account type selection if no user type is provided
@@ -34,56 +55,38 @@ const SignUp = () => {
     }
   }, [formData, navigate]);
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      if (!formData.userType) {
-        setError('User type is required');
-        setLoading(false);
-        return;
-      }
-
-      // Create the user account
-      await signupApi({
-        username: email.trim(),
-        email: email.trim(),
-        password: password.trim(),
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-        user_type: formData.userType,
-      });
-
-      // TODO: Create vendor/organization profile with additional details
-      // (industryType, description, address) would be saved in a separate API call
-
-      // Redirect to login page on success
-      navigate('/login', {
-        replace: true,
-        state: {
-          message: 'Account created successfully! Please log in.',
-        },
-      });
-    } catch (err) {
-      const error = err as Error;
-      let errorMessage = 'Sign up failed';
-      if (error.message) {
-        errorMessage = error.message;
-      }
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+    if (!formData.userType) {
+      setError('User type is required');
+      return;
     }
+
+    // Navigate to signup page with details data
+    navigate('/signup', {
+      state: {
+        userType: formData.userType,
+        industryType: industryType.trim(),
+        description: description.trim(),
+        address: address.trim(),
+      },
+    });
   }
+
+  const isVendor = formData?.userType === 'VENDOR';
+  const industryOptions = isVendor ? VENDOR_INDUSTRIES : ORGANIZATION_TYPES;
+  const pageTitle = isVendor
+    ? "Let's get to know more about your vendor"
+    : "Let's get to know more about your organization";
 
   return (
     <div className="min-h-screen bg-karp-background flex">
       {/* Left Column - Progress Indicator */}
       <div className="w-1/3 bg-karp-background p-8 border-r border-karp-font/10">
         <Link
-          to="/signup/details"
+          to="/signup/select-type"
           className="inline-flex items-center text-karp-font hover:text-karp-primary mb-8"
         >
           <ChevronLeftIcon />
@@ -129,66 +132,59 @@ const SignUp = () => {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <h1 className="text-3xl font-bold text-karp-font mb-8">
-            Let's set up your account
+            {pageTitle}
           </h1>
 
           <form onSubmit={onSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="firstName" className="text-karp-font">
-                First name
+              <Label htmlFor="industryType" className="text-karp-font">
+                Select your {isVendor ? 'industry type' : 'organization type'}
+              </Label>
+              <select
+                id="industryType"
+                value={industryType}
+                onChange={e => setIndustryType(e.target.value)}
+                required
+                className="w-full px-3 py-2 bg-white border border-karp-font/20 rounded-md text-karp-font focus:outline-none focus:ring-2 focus:ring-karp-primary focus:border-karp-primary"
+              >
+                <option value="">
+                  {isVendor ? 'Industry Type' : 'Organization Type'}
+                </option>
+                {industryOptions.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-karp-font">
+                Give a short description about your{' '}
+                {isVendor ? 'company' : 'organization'}.
+              </Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                required
+                placeholder="Summarize here."
+                rows={4}
+                className="bg-white border-karp-font/20 text-karp-font"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-karp-font">
+                Address
               </Label>
               <Input
-                id="firstName"
+                id="address"
                 type="text"
-                value={firstName}
-                onChange={e => setFirstName(e.target.value)}
+                value={address}
+                onChange={e => setAddress(e.target.value)}
                 required
-                placeholder="Enter your first name."
-                className="bg-white border-karp-font/20 text-karp-font"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastName" className="text-karp-font">
-                Last name
-              </Label>
-              <Input
-                id="lastName"
-                type="text"
-                value={lastName}
-                onChange={e => setLastName(e.target.value)}
-                required
-                placeholder="Enter your last name."
-                className="bg-white border-karp-font/20 text-karp-font"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-karp-font">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                placeholder="Enter your company email address."
-                className="bg-white border-karp-font/20 text-karp-font"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-karp-font">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                placeholder="Enter a password."
+                placeholder="Address here"
                 className="bg-white border-karp-font/20 text-karp-font"
               />
             </div>
@@ -201,11 +197,10 @@ const SignUp = () => {
 
             <Button
               type="submit"
-              disabled={loading}
               variant="outline"
               className="w-full border-karp-orange/30 bg-white text-karp-font hover:bg-karp-font/5"
             >
-              {loading ? 'Processing…' : 'Next'}
+              Next
             </Button>
           </form>
         </div>
@@ -214,4 +209,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUpDetails;

@@ -14,7 +14,7 @@ const UserTypeSelection = () => {
 
   const handleNext = () => {
     if (selectedType) {
-      navigate('/signup', { state: { userType: selectedType } });
+      navigate('/signup/details', { state: { userType: selectedType } });
     }
   };
 
@@ -68,9 +68,12 @@ const UserTypeSelection = () => {
       {/* Right Column - Selection */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="max-w-2xl w-full">
-          <h1 className="text-3xl font-bold text-karp-font mb-8">
+          <h1 className="text-3xl font-bold text-karp-font mb-2">
             Are you an Organization or Vendor?
           </h1>
+          <p className="text-lg text-karp-font mb-8">
+            Please select a user type.
+          </p>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
             {/* Organization Card */}
@@ -129,8 +132,11 @@ const UserTypeSelection = () => {
           <Button
             onClick={handleNext}
             disabled={!selectedType}
-            variant="outline"
-            className="w-full border-karp-orange/30 bg-white text-karp-font hover:bg-karp-font/5 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`w-full ${
+              selectedType
+                ? 'bg-karp-orange text-white hover:bg-karp-orange/90'
+                : 'bg-white border border-karp-orange/30 text-karp-font opacity-50 cursor-not-allowed'
+            }`}
           >
             Next
           </Button>
