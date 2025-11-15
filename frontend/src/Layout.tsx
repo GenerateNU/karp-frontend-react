@@ -40,8 +40,18 @@ const Layout = () => {
           Home
         </Link>
         {user && canAccessEvents(user.user_type) && (
-          <Link to="/events" style={{ marginRight: 12 }}>
-            Events
+          <Link to="/events?status=APPROVED" style={{ marginRight: 12 }}>
+            Live Events
+          </Link>
+        )}
+        {user && canAccessEvents(user.user_type) && (
+          <Link to="/events?status=PUBLISHED" style={{ marginRight: 12 }}>
+            Published Events
+          </Link>
+        )}
+        {user && canAccessEvents(user.user_type) && (
+          <Link to="/events?status=DRAFT" style={{ marginRight: 12 }}>
+            Draft Events
           </Link>
         )}
         {user && canAccessItems(user.user_type) && (

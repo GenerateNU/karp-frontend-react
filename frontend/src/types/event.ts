@@ -1,4 +1,10 @@
-export type Status = 'draft' | 'published' | 'cancelled' | 'completed';
+export type Status =
+  | 'PUBLISHED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'DRAFT'
+  | 'DELETED'
+  | 'APPROVED';
 
 export type Location = {
   latitude: number;
