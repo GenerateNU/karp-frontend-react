@@ -37,7 +37,6 @@ export type CreateEventRequest = Omit<
   Event,
   | 'id'
   | 'created_at'
-  | 'status'
   | 'organization_id'
   | 'created_by'
   | 'location'

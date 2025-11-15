@@ -5,7 +5,7 @@ import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import type { UpdateEventRequest } from '@/types/event';
 import { useAuth } from '@/context/AuthContext';
-import type { Status } from '@/types/event';
+import type { Status, Event } from '@/types/event';
 import { useSearchParams } from 'react-router-dom';
 
 export function EventsList() {
@@ -17,13 +17,15 @@ export function EventsList() {
   const updateEvent = useUpdateEvent();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+
   const { user } = useAuth();
   const isAdmin = user?.user_type === 'ADMIN';
 
   function sendStatusUpdate(
     eventId: string,
     current: UpdateEventRequest,
-    newStatus: 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED'
+    newStatus: Status
   ) {
     updateEvent.mutate({
       id: eventId,
@@ -37,7 +39,7 @@ export function EventsList() {
       keywords: current.keywords,
       age_min: current.age_min,
       age_max: current.age_max,
-      status: newStatus.toLowerCase() as never,
+      status: newStatus,
     } as never);
   }
 
@@ -84,7 +86,8 @@ export function EventsList() {
             return (
               <div
                 key={event.id}
-                className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50"
+                className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50 cursor-pointer"
+                onClick={() => setEditingEvent(event)}
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -125,9 +128,10 @@ export function EventsList() {
                         <Button
                           size="sm"
                           variant="success"
-                          onClick={() =>
-                            sendStatusUpdate(event.id, event, 'PUBLISHED')
-                          }
+                          onClick={e => {
+                            e.stopPropagation();
+                            sendStatusUpdate(event.id, event, 'PUBLISHED');
+                          }}
                           disabled={updateEvent.isPending}
                         >
                           {updateEvent.isPending ? 'Publishing...' : 'Publish'}
@@ -137,9 +141,10 @@ export function EventsList() {
                         <Button
                           size="sm"
                           variant="destructive"
-                          onClick={() =>
-                            sendStatusUpdate(event.id, event, 'CANCELLED')
-                          }
+                          onClick={e => {
+                            e.stopPropagation();
+                            sendStatusUpdate(event.id, event, 'CANCELLED');
+                          }}
                           disabled={updateEvent.isPending}
                         >
                           {updateEvent.isPending ? 'Cancelling...' : 'Cancel'}
@@ -149,7 +154,8 @@ export function EventsList() {
                         <Button
                           size="sm"
                           variant="warning"
-                          onClick={() => {
+                          onClick={e => {
+                            e.stopPropagation();
                             setEditingEventId(event.id);
                             setCoinValue(String(event.coins ?? 0));
                           }}
@@ -166,7 +172,7 @@ export function EventsList() {
         </div>
       ) : (
         <div className="text-center py-8 text-karp-font/70">
-          <p>No events found. Create your first event!</p>
+          <p>No events found</p>
         </div>
       )}
 
@@ -177,6 +183,19 @@ export function EventsList() {
         size="2xl"
       >
         <EventForm onSuccess={() => setShowCreateModal(false)} />
+      </Modal>
+
+      <Modal
+        isOpen={!!editingEvent}
+        onClose={() => setEditingEvent(null)}
+        title="Edit Event"
+        size="2xl"
+      >
+        <EventForm
+          mode="edit"
+          initialEvent={editingEvent}
+          onSuccess={() => setEditingEvent(null)}
+        />
       </Modal>
 
       <Modal

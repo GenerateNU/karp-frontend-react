@@ -45,7 +45,7 @@ const Layout = () => {
         </Link>
         {user && canAccessEvents(user.user_type) && (
           <Link to="/events?status=APPROVED" style={{ marginRight: 12 }}>
-            Live Events
+            Approved Events
           </Link>
         )}
         {user && canAccessEvents(user.user_type) && (
