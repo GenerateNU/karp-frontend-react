@@ -27,7 +27,7 @@ export async function getAllEvents(
   }
 
   return makeRequest<Event[]>(
-    `/event/search?statuses=${status}&sort_by=created_at&order=desc&${params.toString()}`,
+    `/event/search?statuses=${status}&sort_by=created_at&sort_dir=desc&${params.toString()}`,
     'GET'
   );
 }

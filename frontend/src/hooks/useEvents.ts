@@ -25,7 +25,7 @@ export function useEvents(
   organizationId: string | undefined
 ) {
   return useQuery({
-    queryKey: eventKeys.list({ status, organizationId }),
+    queryKey: ['event', status, organizationId],
     queryFn: () => getAllEvents(status, organizationId),
   });
 }
