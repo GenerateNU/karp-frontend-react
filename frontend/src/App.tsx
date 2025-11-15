@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Events from './pages/Events';
 import Items from './pages/Items';
 import Organizations from './pages/Organizations';
+import Vendors from './pages/Vendors';
 import Volunteers from './pages/Volunteers';
 import Achievements from './pages/Achievements';
 import Login from './pages/Login';
@@ -54,6 +55,14 @@ function App() {
               element={
                 <ProtectedRoute allowedUserTypes={['ADMIN']}>
                   <Volunteers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="vendors"
+              element={
+                <ProtectedRoute allowedUserTypes={['ADMIN']}>
+                  <Vendors />
                 </ProtectedRoute>
               }
             />

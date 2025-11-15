@@ -22,6 +22,9 @@ const Layout = () => {
   const canAccessAchievements = (userType: UserType) => {
     return ['ADMIN'].includes(userType);
   };
+  const canAccessVendors = (userType: UserType) => {
+    return ['ADMIN'].includes(userType);
+  };
 
   function handleLogout() {
     logout();
@@ -48,7 +51,7 @@ const Layout = () => {
       >
         <Link to="/">Home</Link>
         {user && canAccessEvents(user.user_type) && (
-          <Link to="/events?status=APPROVED">Events</Link>
+          <Link to="/events">Events</Link>
         )}
 
         {user && canAccessItems(user.user_type) && (
@@ -59,9 +62,14 @@ const Layout = () => {
           <Link to="/organizations">Organizations</Link>
         )}
 
+        {user && canAccessVendors(user.user_type) && (
+          <Link to="/vendors">Vendors</Link>
+        )}
+
         {user && canAccessVolunteers(user.user_type) && (
           <Link to="/volunteers">Volunteers</Link>
         )}
+
         {user && canAccessAchievements(user.user_type) && (
           <Link to="/achievements">Achievements</Link>
         )}
