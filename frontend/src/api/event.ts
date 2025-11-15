@@ -16,9 +16,18 @@ export async function getEvent(eventId: string): Promise<Event> {
   return makeRequest<Event>(`/event/${eventId}`, 'GET');
 }
 
-export async function getAllEvents(status: EventStatus): Promise<Event[]> {
+export async function getAllEvents(
+  status: EventStatus,
+  organizationId: string | undefined
+): Promise<Event[]> {
+  const params = new URLSearchParams();
+
+  if (organizationId) {
+    params.append('organization_id', organizationId);
+  }
+
   return makeRequest<Event[]>(
-    `/event/search?statuses=${status}&sort_by=created_at&order=desc`,
+    `/event/search?statuses=${status}&sort_by=created_at&order=desc&${params.toString()}`,
     'GET'
   );
 }

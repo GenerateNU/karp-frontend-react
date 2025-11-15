@@ -20,10 +20,13 @@ export const eventKeys = {
     [...eventKeys.all, 'organization', organizationId] as const,
 };
 
-export function useEvents(status: EventStatus) {
+export function useEvents(
+  status: EventStatus,
+  organizationId: string | undefined
+) {
   return useQuery({
-    queryKey: eventKeys.list({ status }),
-    queryFn: () => getAllEvents(status),
+    queryKey: eventKeys.list({ status, organizationId }),
+    queryFn: () => getAllEvents(status, organizationId),
   });
 }
 

@@ -9,11 +9,16 @@ import type { EventStatus, Event } from '@/types/event';
 import { useSearchParams } from 'react-router-dom';
 
 export function EventsList() {
+  const { user, userProfile } = useAuth();
+  const isAdmin = user?.user_type === 'ADMIN';
+
+  const organizationId = isAdmin ? undefined : userProfile?.id;
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const status = searchParams.get('status') || 'APPROVED';
+  const status = (searchParams.get('status') || 'APPROVED') as EventStatus;
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: events, isLoading, error } = useEvents(status as EventStatus);
+  const { data: events, isLoading, error } = useEvents(status, organizationId);
   const updateEvent = useUpdateEvent();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
@@ -22,9 +27,6 @@ export function EventsList() {
   const [updatingAction, setUpdatingAction] = useState<
     'publish' | 'cancel' | null
   >(null);
-
-  const { user } = useAuth();
-  const isAdmin = user?.user_type === 'ADMIN';
 
   function sendStatusUpdate(
     eventId: string,
