@@ -25,7 +25,7 @@ export function EventsList() {
     eventId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     current: any,
-    newStatus: 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED'
+    newStatus: Status
   ) {
     updateEvent.mutate({
       id: eventId,
@@ -39,7 +39,7 @@ export function EventsList() {
       keywords: current.keywords,
       age_min: current.age_min,
       age_max: current.age_max,
-      status: newStatus.toLowerCase() as never,
+      status: newStatus,
     } as never);
   }
 
