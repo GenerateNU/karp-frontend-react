@@ -3,6 +3,7 @@ import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 export function EventsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -11,8 +12,12 @@ export function EventsList() {
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
 
+  const { user } = useAuth();
+  const isAdmin = user?.user_type === 'ADMIN';
+
   function sendStatusUpdate(
     eventId: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     current: any,
     newStatus: 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED'
   ) {
@@ -130,16 +135,18 @@ export function EventsList() {
                           {updateEvent.isPending ? 'Cancelling...' : 'Cancel'}
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="warning"
-                        onClick={() => {
-                          setEditingEventId(event.id);
-                          setCoinValue(String(event.coins ?? 0));
-                        }}
-                      >
-                        Edit Coins
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          size="sm"
+                          variant="warning"
+                          onClick={() => {
+                            setEditingEventId(event.id);
+                            setCoinValue(String(event.coins ?? 0));
+                          }}
+                        >
+                          Edit Coins
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -8,6 +8,7 @@ import {
 import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 export function ItemsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -17,6 +18,9 @@ export function ItemsList() {
   const editItemCoins = useEditItemCoins();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
+
+  const { user } = useAuth();
+  const isAdmin = user?.user_type === 'ADMIN';
 
   if (isLoading) {
     return <div className="p-4">Loading items...</div>;
@@ -111,16 +115,18 @@ export function ItemsList() {
                           : 'Deactivate'}
                       </Button>
                     )}
-                    <Button
-                      size="sm"
-                      variant="warning"
-                      onClick={() => {
-                        setEditingItemId(item.id);
-                        setCoinValue(String(item.price ?? 0));
-                      }}
-                    >
-                      Edit Coins
-                    </Button>
+                    {isAdmin && (
+                      <Button
+                        size="sm"
+                        variant="warning"
+                        onClick={() => {
+                          setEditingItemId(item.id);
+                          setCoinValue(String(item.price ?? 0));
+                        }}
+                      >
+                        Edit Coins
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
