@@ -35,48 +35,35 @@ const Layout = () => {
     <>
       <div
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 20,
           padding: 12,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderBottom: '1px solid rgba(29, 15, 72, 0.2)',
-          marginBottom: 16,
+          minWidth: '1100px',
         }}
       >
-        <Link to="/" style={{ marginRight: 12 }}>
-          Home
-        </Link>
+        <Link to="/">Home</Link>
         {user && canAccessEvents(user.user_type) && (
-          <Link to="/events?status=APPROVED" style={{ marginRight: 12 }}>
-            Approved Events
-          </Link>
-        )}
-        {user && canAccessEvents(user.user_type) && (
-          <Link to="/events?status=PUBLISHED" style={{ marginRight: 12 }}>
-            Published Events
-          </Link>
-        )}
-        {user && canAccessEvents(user.user_type) && (
-          <Link to="/events?status=DRAFT" style={{ marginRight: 12 }}>
-            Draft Events
-          </Link>
+          <Link to="/events?status=APPROVED">Events</Link>
         )}
         {user && canAccessItems(user.user_type) && (
-          <Link to="/items" style={{ marginRight: 12 }}>
-            Items
-          </Link>
+          <Link to="/items">Items</Link>
         )}
         {user && canAccessOrganizations(user.user_type) && (
-          <Link to="/organizations" style={{ marginRight: 12 }}>
-            Organizations
-          </Link>
+          <Link to="/organizations">Organizations</Link>
         )}
         {user && canAccessVolunteers(user.user_type) && (
-          <Link to="/volunteers" style={{ marginRight: 12 }}>
-            Volunteers
-          </Link>
+          <Link to="/volunteers">Volunteers</Link>
         )}
         {user && canAccessAchievements(user.user_type) && (
-          <Link to="/achievements" style={{ marginRight: 12 }}>
-            Achievements
-          </Link>
+          <Link to="/achievements">Achievements</Link>
         )}
         {isAuthenticated && (
           <Link to="/login" onClick={handleLogout}>
@@ -84,6 +71,8 @@ const Layout = () => {
           </Link>
         )}
       </div>
+      {/* spacer to offset fixed header height */}
+      <div style={{ height: 48 }} />
       <Outlet />
     </>
   );
