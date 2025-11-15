@@ -172,7 +172,7 @@ export function EventsList() {
         </div>
       ) : (
         <div className="text-center py-8 text-karp-font/70">
-          <p>No events found. Create your first event!</p>
+          <p>No events found</p>
         </div>
       )}
 
