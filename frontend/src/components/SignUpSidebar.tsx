@@ -47,8 +47,8 @@ export const SignUpSidebar = ({
         <ChevronLeftIcon />
       </Link>
 
-      <div className="flex-1 flex items-start pt-[20vh]">
-        <div className="space-y-2 w-full">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="space-y-4 w-full max-w-[300px] mx-auto">
           {steps.map((step, index) => {
             const isActive = step.number === currentStep;
             const isCompleted = step.number < currentStep;
