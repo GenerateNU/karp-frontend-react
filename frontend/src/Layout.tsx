@@ -2,8 +2,6 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import type { UserType } from '@/types/user';
 
-const SIDEBAR_WIDTH = 'clamp(180px, 10vw, 200px)';
-
 const Layout = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
@@ -42,7 +40,7 @@ const Layout = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <>
       <aside
         style={{
           position: 'fixed',
@@ -97,7 +95,7 @@ const Layout = () => {
             </Link>
           </div>
         )}
-      </div>
+      </aside>
       {/* spacer to offset fixed header height */}
       <div style={{ height: 48 }} />
       <Outlet />
