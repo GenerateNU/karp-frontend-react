@@ -169,7 +169,7 @@ export function ItemsList() {
         </div>
       ) : (
         <div className="text-center py-8 text-karp-font/70">
-          <p>No items found. Create your first item!</p>
+          <p>No items found</p>
         </div>
       )}
 
