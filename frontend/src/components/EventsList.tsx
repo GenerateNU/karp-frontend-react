@@ -154,7 +154,7 @@ export function EventsList() {
                         <p>Coins: {event.coins}</p>
                       </div>
                       <div className="mt-3 flex gap-2 justify-end">
-                        {normalizedStatus !== 'published' && (
+                        {normalizedStatus === 'draft' && (
                           <Button
                             size="sm"
                             variant="success"
