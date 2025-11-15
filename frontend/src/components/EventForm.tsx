@@ -19,7 +19,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
     start_date_time: '',
     end_date_time: '',
     max_volunteers: 0,
-    coins: 0,
+    manual_difficulty_coefficient: 0,
     description: '',
     keywords: [],
     age_min: 0,
@@ -67,7 +67,9 @@ export function EventForm({ onSuccess }: EventFormProps) {
     setFormData(prev => ({
       ...prev,
       [name]:
-        name === 'max_volunteers' || name === 'coins' ? Number(value) : value,
+        name === 'max_volunteers' || name === 'manual_difficulty_coefficient'
+          ? Number(value)
+          : value,
     }));
   };
 
@@ -158,19 +160,23 @@ export function EventForm({ onSuccess }: EventFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="coins" className="text-karp-font">
-                Coins
+              <Label
+                htmlFor="manual_difficulty_coefficient"
+                className="text-karp-font"
+              >
+                Difficulty
               </Label>
-              <Input
-                type="number"
-                id="coins"
-                name="coins"
-                value={formData.coins}
+              <select
+                id="manual_difficulty_coefficient"
+                name="manual_difficulty_coefficient"
+                value={String(formData.manual_difficulty_coefficient ?? 0)}
                 onChange={handleChange}
-                min="0"
-                placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
-              />
+                className="bg-karp-background border border-karp-font/20 text-karp-font rounded-md px-3 py-2"
+              >
+                <option value="0">Easy</option>
+                <option value="1">Moderate</option>
+                <option value="2">Difficult</option>
+              </select>
             </div>
           </div>
 

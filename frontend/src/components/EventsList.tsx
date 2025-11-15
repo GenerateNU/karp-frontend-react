@@ -4,13 +4,21 @@ import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import type { UpdateEventRequest } from '@/types/event';
+import { useAuth } from '@/context/AuthContext';
+import type { Status } from '@/types/event';
+import { useSearchParams } from 'react-router-dom';
 
 export function EventsList() {
+  const [searchParams] = useSearchParams();
+  const status = searchParams.get('status') || 'APPROVED';
+
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: events, isLoading, error } = useEvents();
+  const { data: events, isLoading, error } = useEvents(status as Status);
   const updateEvent = useUpdateEvent();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
+  const { user } = useAuth();
+  const isAdmin = user?.user_type === 'ADMIN';
 
   function sendStatusUpdate(
     eventId: string,
@@ -41,10 +49,16 @@ export function EventsList() {
     return <div className="p-4 text-karp-orange">Error loading events</div>;
   }
 
+  const titleizedStatus =
+    status.toLowerCase().charAt(0).toUpperCase() +
+    status.toLowerCase().slice(1);
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Events</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          {titleizedStatus} Events
+        </h1>
         <Button onClick={() => setShowCreateModal(true)}>
           <svg
             className="w-5 h-5 mr-2"
@@ -131,16 +145,18 @@ export function EventsList() {
                           {updateEvent.isPending ? 'Cancelling...' : 'Cancel'}
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="warning"
-                        onClick={() => {
-                          setEditingEventId(event.id);
-                          setCoinValue(String(event.coins ?? 0));
-                        }}
-                      >
-                        Edit Coins
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          size="sm"
+                          variant="warning"
+                          onClick={() => {
+                            setEditingEventId(event.id);
+                            setCoinValue(String(event.coins ?? 0));
+                          }}
+                        >
+                          Edit Coins
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>

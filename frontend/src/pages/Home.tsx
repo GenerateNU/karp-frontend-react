@@ -1,16 +1,16 @@
-import { useAdmins } from '@/hooks/useAdmins';
+// import { useAdmins } from '@/hooks/useAdmins';
 
 const Home = () => {
-  const { data: admins, isLoading, error } = useAdmins();
+  // const { data: admins, isLoading, error } = useAdmins();
 
   return (
     <div className="p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-karp-font mb-6 text-center">
-          Welcome to KARP
+          Welcome to Karp
         </h1>
 
-        {isLoading && (
+        {/* {isLoading && (
           <div className="text-center py-8 text-karp-font/70">
             Loading admins...
           </div>
@@ -78,7 +78,7 @@ const Home = () => {
           <div className="text-center py-8 text-karp-font/70">
             No admins found.
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
