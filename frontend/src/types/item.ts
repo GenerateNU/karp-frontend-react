@@ -1,7 +1,15 @@
+export type ItemStatus =
+  | 'PUBLISHED'
+  | 'ACTIVE'
+  | 'DRAFT'
+  | 'DELETED'
+  | 'APPROVED'
+  | 'REJECTED';
+
 export interface Item {
   id: string;
   name: string;
-  status: 'APPROVED' | 'IN_REVIEW' | 'REJECTED' | 'DELETED' | 'ACTIVE';
+  status: ItemStatus;
   vendor_id: string;
   time_posted: string;
   expiration: string;
@@ -19,7 +27,7 @@ export interface UpdateItemRequest {
   name?: string;
   price?: number;
   expiration?: string;
-  status?: Item['status'];
+  status?: ItemStatus;
 }
 
 export type ItemSortParam = 'date' | 'name' | 'coins';

@@ -5,17 +5,20 @@ import type {
   UpdateItemRequest,
   ItemSortParam,
   SortOrder,
+  ItemStatus,
 } from '@/types/item';
 
 export function useItems(
+  status?: ItemStatus,
   searchText?: string,
   vendorId?: string,
   sortBy?: ItemSortParam,
   sortOrder: SortOrder = 'asc'
 ) {
   return useQuery({
-    queryKey: ['items', searchText, vendorId, sortBy, sortOrder],
-    queryFn: () => itemApi.getItems(searchText, vendorId, sortBy, sortOrder),
+    queryKey: ['items', status, searchText, vendorId, sortBy, sortOrder],
+    queryFn: () =>
+      itemApi.getItems(status, searchText, vendorId, sortBy, sortOrder),
   });
 }
 

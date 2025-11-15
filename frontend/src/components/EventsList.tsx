@@ -5,7 +5,7 @@ import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import type { UpdateEventRequest } from '@/types/event';
 import { useAuth } from '@/context/AuthContext';
-import type { Status, Event } from '@/types/event';
+import type { EventStatus, Event } from '@/types/event';
 import { useSearchParams } from 'react-router-dom';
 
 export function EventsList() {
@@ -13,7 +13,7 @@ export function EventsList() {
   const status = searchParams.get('status') || 'APPROVED';
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: events, isLoading, error } = useEvents(status as Status);
+  const { data: events, isLoading, error } = useEvents(status as EventStatus);
   const updateEvent = useUpdateEvent();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
@@ -25,7 +25,7 @@ export function EventsList() {
   function sendStatusUpdate(
     eventId: string,
     current: UpdateEventRequest,
-    newStatus: Status
+    newStatus: EventStatus
   ) {
     updateEvent.mutate({
       id: eventId,
@@ -55,10 +55,12 @@ export function EventsList() {
     status.toLowerCase().charAt(0).toUpperCase() +
     status.toLowerCase().slice(1);
 
-  const tabs: Array<{ label: string; value: Status }> = [
-    { label: 'Live', value: 'APPROVED' },
+  const tabs: Array<{ label: string; value: EventStatus }> = [
+    { label: 'Approved', value: 'APPROVED' },
     { label: 'Published', value: 'PUBLISHED' },
     { label: 'Drafts', value: 'DRAFT' },
+    { label: 'Rejected', value: 'REJECTED' },
+    { label: 'Cancelled', value: 'CANCELLED' },
   ];
 
   return (
@@ -86,7 +88,7 @@ export function EventsList() {
               Create Event
             </Button>
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-3 flex gap-2 flex-nowrap">
             {tabs.map(tab => {
               const isActive = status === tab.value;
               return (
@@ -94,7 +96,7 @@ export function EventsList() {
                   key={tab.value}
                   variant={isActive ? 'default' : 'outline'}
                   onClick={() => setSearchParams({ status: tab.value })}
-                  className="w-full"
+                  className="w-full flex-1"
                 >
                   {tab.label}
                 </Button>

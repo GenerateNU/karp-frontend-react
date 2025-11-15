@@ -7,7 +7,7 @@ import {
   deleteEvent,
   getEventsByOrganization,
 } from '@/api/event';
-import type { Status } from '@/types/event';
+import type { EventStatus } from '@/types/event';
 
 export const eventKeys = {
   all: ['events'] as const,
@@ -20,7 +20,7 @@ export const eventKeys = {
     [...eventKeys.all, 'organization', organizationId] as const,
 };
 
-export function useEvents(status: Status) {
+export function useEvents(status: EventStatus) {
   return useQuery({
     queryKey: eventKeys.list({ status }),
     queryFn: () => getAllEvents(status),

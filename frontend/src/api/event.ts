@@ -3,7 +3,7 @@ import type {
   Event,
   CreateEventRequest,
   UpdateEventRequest,
-  Status,
+  EventStatus,
 } from '@/types/event';
 
 export async function createEvent(
@@ -16,7 +16,7 @@ export async function getEvent(eventId: string): Promise<Event> {
   return makeRequest<Event>(`/event/${eventId}`, 'GET');
 }
 
-export async function getAllEvents(status: Status): Promise<Event[]> {
+export async function getAllEvents(status: EventStatus): Promise<Event[]> {
   return makeRequest<Event[]>(
     `/event/search?statuses=${status}&sort_by=created_at&order=desc`,
     'GET'

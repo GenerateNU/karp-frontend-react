@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCreateEvent } from '@/hooks/useEvents';
-import type { CreateEventRequest, Status, Event } from '@/types/event';
+import type { CreateEventRequest, EventStatus, Event } from '@/types/event';
 import { updateEvent } from '@/api/event';
 import { useQueryClient } from '@tanstack/react-query';
 import { eventKeys } from '@/hooks/useEvents';
@@ -73,7 +73,7 @@ export function EventForm({
 
     try {
       setSubmittingAction(action);
-      const statusOverride: Status | undefined =
+      const statusOverride: EventStatus | undefined =
         action === 'draft' ? 'DRAFT' : undefined;
       const payload = { ...(formData as CreateEventRequest) } as Record<
         string,

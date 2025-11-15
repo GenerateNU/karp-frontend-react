@@ -9,10 +9,14 @@ import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
+import type { ItemStatus } from '@/types/item';
 
 export function ItemsList() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const status = (searchParams.get('status') as ItemStatus) || 'APPROVED';
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: items, isLoading, error } = useItems();
+  const { data: items, isLoading, error } = useItems(status);
   const activateItem = useActivateItem();
   const deactivateItem = useDeactivateItem();
   const editItemCoins = useEditItemCoins();
@@ -32,28 +36,60 @@ export function ItemsList() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-karp-font">Items</h1>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Create Item
-        </Button>
+      <div className="fixed top-[48px] left-0 right-0 z-30 px-4 md:px-8 py-3 bg-karp-background/95 supports-[backdrop-filter]:bg-karp-background/80 backdrop-blur border-b border-karp-font/10">
+        <div className="mx-auto w-full min-w-[1100px]">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-foreground">
+              {status.toLowerCase().charAt(0).toUpperCase() +
+                status.toLowerCase().slice(1)}{' '}
+              Items
+            </h1>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Create Item
+            </Button>
+          </div>
+          <div className="mt-3 flex gap-2 flex-nowrap">
+            {[
+              { label: 'Approved', value: 'APPROVED' },
+              { label: 'Published', value: 'PUBLISHED' },
+              { label: 'Active', value: 'ACTIVE' },
+              { label: 'Draft', value: 'DRAFT' },
+              { label: 'Rejected', value: 'REJECTED' },
+              { label: 'Deleted', value: 'DELETED' },
+            ].map(tab => {
+              const isActive = status === tab.value;
+              return (
+                <Button
+                  key={tab.value}
+                  variant={isActive ? 'default' : 'outline'}
+                  onClick={() => setSearchParams({ status: tab.value })}
+                  className="w-full flex-1"
+                >
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       </div>
+      {/* spacer to offset the fixed title bar */}
+      <div style={{ height: 72 }} />
 
       {items && items.length > 0 ? (
-        <div className="grid gap-4">
+        <div className="mx-auto w-full min-w-[1100px] grid gap-4">
           {items.map(item => (
             <div
               key={item.id}
@@ -79,13 +115,11 @@ export function ItemsList() {
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
                       item.status === 'ACTIVE'
                         ? 'bg-karp-green/20 text-karp-green'
-                        : item.status === 'IN_REVIEW'
-                          ? 'bg-karp-yellow/20 text-karp-yellow'
-                          : item.status === 'APPROVED'
-                            ? 'bg-karp-primary/20 text-karp-primary'
-                            : item.status === 'REJECTED'
-                              ? 'bg-karp-orange/20 text-karp-orange'
-                              : 'bg-karp-font/10 text-karp-font'
+                        : item.status === 'APPROVED'
+                          ? 'bg-karp-primary/20 text-karp-primary'
+                          : item.status === 'REJECTED'
+                            ? 'bg-karp-orange/20 text-karp-orange'
+                            : 'bg-karp-font/10 text-karp-font'
                     }`}
                   >
                     {item.status}
