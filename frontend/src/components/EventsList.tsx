@@ -18,6 +18,10 @@ export function EventsList() {
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
+  const [updatingAction, setUpdatingAction] = useState<
+    'publish' | 'cancel' | null
+  >(null);
 
   const { user } = useAuth();
   const isAdmin = user?.user_type === 'ADMIN';
@@ -27,20 +31,36 @@ export function EventsList() {
     current: UpdateEventRequest,
     newStatus: EventStatus
   ) {
-    updateEvent.mutate({
-      id: eventId,
-      coins: current.coins,
-      name: current.name,
-      address: current.address,
-      start_date_time: current.start_date_time,
-      end_date_time: current.end_date_time,
-      max_volunteers: current.max_volunteers,
-      description: current.description,
-      keywords: current.keywords,
-      age_min: current.age_min,
-      age_max: current.age_max,
-      status: newStatus,
-    } as never);
+    setUpdatingEventId(eventId);
+    setUpdatingAction(
+      newStatus === 'CANCELLED'
+        ? 'cancel'
+        : newStatus === 'PUBLISHED'
+          ? 'publish'
+          : null
+    );
+    updateEvent.mutate(
+      {
+        id: eventId,
+        coins: current.coins,
+        name: current.name,
+        address: current.address,
+        start_date_time: current.start_date_time,
+        end_date_time: current.end_date_time,
+        max_volunteers: current.max_volunteers,
+        description: current.description,
+        keywords: current.keywords,
+        age_min: current.age_min,
+        age_max: current.age_max,
+        status: newStatus,
+      } as never,
+      {
+        onSettled: () => {
+          setUpdatingEventId(null);
+          setUpdatingAction(null);
+        },
+      }
+    );
   }
 
   if (isLoading) {
@@ -164,7 +184,9 @@ export function EventsList() {
                             }}
                             disabled={updateEvent.isPending}
                           >
-                            {updateEvent.isPending
+                            {updateEvent.isPending &&
+                            updatingEventId === event.id &&
+                            updatingAction === 'publish'
                               ? 'Publishing...'
                               : 'Publish'}
                           </Button>
@@ -179,7 +201,11 @@ export function EventsList() {
                             }}
                             disabled={updateEvent.isPending}
                           >
-                            {updateEvent.isPending ? 'Cancelling...' : 'Cancel'}
+                            {updateEvent.isPending &&
+                            updatingEventId === event.id &&
+                            updatingAction === 'cancel'
+                              ? 'Cancelling...'
+                              : 'Cancel'}
                           </Button>
                         )}
                         {isAdmin && (
@@ -191,6 +217,7 @@ export function EventsList() {
                               setEditingEventId(event.id);
                               setCoinValue(String(event.coins ?? 0));
                             }}
+                            disabled={updateEvent.isPending}
                           >
                             Edit Coins
                           </Button>
