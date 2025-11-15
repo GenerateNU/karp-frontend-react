@@ -7,6 +7,9 @@ import Organizations from './pages/Organizations';
 import Volunteers from './pages/Volunteers';
 import Achievements from './pages/Achievements';
 import Login from './pages/Login';
+import UserTypeSelection from './pages/UserTypeSelection';
+import SignUp from './pages/SignUp';
+import SignUpDetails from './pages/SignUpDetails';
 import RequireAuth from './components/RequireAuth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import './App.css';
@@ -16,6 +19,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/signup/select-type" element={<UserTypeSelection />} />
+        <Route path="/signup/details" element={<SignUpDetails />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

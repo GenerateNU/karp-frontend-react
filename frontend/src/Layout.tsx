@@ -6,17 +6,14 @@ const Layout = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
 
-  const canAccessEvents = (userType: UserType) => {
-    return ['ORGANIZATION', 'ADMIN'].includes(userType);
-  };
+  const canAccessEvents = (userType: UserType) =>
+    ['ORGANIZATION', 'ADMIN'].includes(userType);
 
-  const canAccessItems = (userType: UserType) => {
-    return ['VENDOR', 'ADMIN'].includes(userType);
-  };
+  const canAccessItems = (userType: UserType) =>
+    ['VENDOR', 'ADMIN'].includes(userType);
 
-  const canAccessOrganizations = (userType: UserType) => {
-    return ['ADMIN'].includes(userType);
-  };
+  const canAccessOrganizations = (userType: UserType) =>
+    ['ADMIN'].includes(userType);
 
   const canAccessVolunteers = (userType: UserType) => {
     return ['ADMIN'].includes(userType);
@@ -33,7 +30,7 @@ const Layout = () => {
 
   return (
     <>
-      <div
+      <aside
         style={{
           position: 'fixed',
           top: 0,
@@ -53,24 +50,28 @@ const Layout = () => {
         {user && canAccessEvents(user.user_type) && (
           <Link to="/events?status=APPROVED">Events</Link>
         )}
+
         {user && canAccessItems(user.user_type) && (
           <Link to="/items">Items</Link>
         )}
+
         {user && canAccessOrganizations(user.user_type) && (
           <Link to="/organizations">Organizations</Link>
         )}
+
         {user && canAccessVolunteers(user.user_type) && (
           <Link to="/volunteers">Volunteers</Link>
         )}
         {user && canAccessAchievements(user.user_type) && (
           <Link to="/achievements">Achievements</Link>
         )}
+
         {isAuthenticated && (
           <Link to="/login" onClick={handleLogout}>
             Logout
           </Link>
         )}
-      </div>
+      </aside>
       {/* spacer to offset fixed header height */}
       <div style={{ height: 48 }} />
       <Outlet />
