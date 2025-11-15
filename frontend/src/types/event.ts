@@ -16,6 +16,7 @@ export type Event = {
   organization_id: string;
   status: Status;
   max_volunteers: number;
+  manual_difficulty_coefficient: number;
   coins: number;
   description?: string;
   keywords?: string[];
