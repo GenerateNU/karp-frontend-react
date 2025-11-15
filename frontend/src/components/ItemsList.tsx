@@ -10,7 +10,8 @@ import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
-import type { ItemStatus } from '@/types/item';
+import type { Item, ItemStatus } from '@/types/item';
+import { useUpdateItem } from '@/hooks/useItems';
 
 export function ItemsList() {
   const { user, userProfile } = useAuth();
@@ -29,7 +30,9 @@ export function ItemsList() {
   const activateItem = useActivateItem();
   const deactivateItem = useDeactivateItem();
   const editItemCoins = useEditItemCoins();
+  const updateItem = useUpdateItem();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
   const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
   const [updatingAction, setUpdatingAction] = useState<
@@ -44,7 +47,8 @@ export function ItemsList() {
     return <div className="p-4 text-karp-orange">Error loading items</div>;
   }
 
-  const anyPending = activateItem.isPending || deactivateItem.isPending;
+  const anyPending =
+    activateItem.isPending || deactivateItem.isPending || updateItem.isPending;
 
   return (
     <div className="p-4">
@@ -105,7 +109,8 @@ export function ItemsList() {
           {items.map(item => (
             <div
               key={item.id}
-              className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50"
+              className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50 cursor-pointer"
+              onClick={() => setEditingItem(item)}
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -144,7 +149,8 @@ export function ItemsList() {
                       <Button
                         size="sm"
                         variant="success"
-                        onClick={() => {
+                        onClick={e => {
+                          e.stopPropagation();
                           setUpdatingItemId(item.id);
                           setUpdatingAction('activate');
                           activateItem.mutate(item.id, {
@@ -166,7 +172,8 @@ export function ItemsList() {
                       <Button
                         size="sm"
                         variant="destructive"
-                        onClick={() => {
+                        onClick={e => {
+                          e.stopPropagation();
                           setUpdatingItemId(item.id);
                           setUpdatingAction('deactivate');
                           deactivateItem.mutate(item.id, {
@@ -189,7 +196,8 @@ export function ItemsList() {
                       <Button
                         size="sm"
                         variant="warning"
-                        onClick={() => {
+                        onClick={e => {
+                          e.stopPropagation();
                           setEditingItemId(item.id);
                           setCoinValue(String(item.price ?? 0));
                         }}
@@ -217,6 +225,19 @@ export function ItemsList() {
         size="lg"
       >
         <ItemForm onSuccess={() => setShowCreateModal(false)} />
+      </Modal>
+
+      <Modal
+        isOpen={!!editingItem}
+        onClose={() => setEditingItem(null)}
+        title="Edit Item"
+        size="lg"
+      >
+        <ItemForm
+          mode="edit"
+          initialItem={editingItem as Item}
+          onSuccess={() => setEditingItem(null)}
+        />
       </Modal>
 
       <Modal

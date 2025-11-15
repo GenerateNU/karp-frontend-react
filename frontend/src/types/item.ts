@@ -21,6 +21,8 @@ export interface CreateItemRequest {
   name: string;
   expiration: string;
   image_url?: string;
+  price: number;
+  status?: ItemStatus;
 }
 
 export interface UpdateItemRequest {

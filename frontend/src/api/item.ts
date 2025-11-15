@@ -42,7 +42,7 @@ export const itemApi = {
   },
 
   updateItem: async (id: string, item: UpdateItemRequest): Promise<void> => {
-    await makeRequest<void>(`/item/${id}`, 'PUT', item);
+    await makeRequest<void>(`/item/edit/${id}`, 'PUT', item);
   },
 
   deactivateItem: async (id: string): Promise<void> => {
