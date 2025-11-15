@@ -3,6 +3,7 @@ import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
+import type { UpdateEventRequest } from '@/types/event';
 
 export function EventsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -13,7 +14,7 @@ export function EventsList() {
 
   function sendStatusUpdate(
     eventId: string,
-    current: any,
+    current: UpdateEventRequest,
     newStatus: 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED'
   ) {
     updateEvent.mutate({
