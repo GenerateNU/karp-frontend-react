@@ -9,10 +9,14 @@ import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { UserIcon } from '@/components/icons/UserIcon';
 import { FishIcon } from '@/components/icons/FishIcon';
 import { signupApi } from '@/api/auth';
+import { useAuth } from '@/context/AuthContext';
+import { createVendor } from '@/api/vendor';
+import { createOrganization } from '@/api/organization';
 
 const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
   const formData = location.state as {
     userType?: UserType;
     industryType?: string;
@@ -56,16 +60,55 @@ const SignUp = () => {
         user_type: formData.userType,
       });
 
-      // TODO: Create vendor/organization profile with additional details
-      // (industryType, description, address) would be saved in a separate API call
+      // Automatically sign in the user with the credentials they used to sign up
+      try {
+        await login(email.trim(), password.trim());
 
-      // Redirect to login page on success
-      navigate('/login', {
-        replace: true,
-        state: {
-          message: 'Account created successfully! Please log in.',
-        },
-      });
+        // Create vendor/organization profile after successful login
+        // (industryType, description, address) are saved in a separate API call
+        if (formData.userType === 'VENDOR' && formData.industryType) {
+          try {
+            await createVendor({
+              name: `${firstName.trim()} ${lastName.trim()}`,
+              business_type: formData.industryType,
+            });
+          } catch (profileError) {
+            console.error('Failed to create vendor profile:', profileError);
+            // Continue even if profile creation fails - user can create it later
+          }
+        } else if (
+          formData.userType === 'ORGANIZATION' &&
+          formData.description &&
+          formData.address
+        ) {
+          try {
+            await createOrganization({
+              name: `${firstName.trim()} ${lastName.trim()}`,
+              description: formData.description,
+              address: formData.address,
+            });
+          } catch (profileError) {
+            console.error(
+              'Failed to create organization profile:',
+              profileError
+            );
+            // Continue even if profile creation fails - user can create it later
+          }
+        }
+
+        // Redirect to home page on successful login
+        navigate('/', { replace: true });
+      } catch (loginError) {
+        // If auto-login fails, redirect to login page with a message
+        const error = loginError as Error;
+        navigate('/login', {
+          replace: true,
+          state: {
+            message: 'Account created successfully! Please log in.',
+            error: error.message || 'Auto-login failed',
+          },
+        });
+      }
     } catch (err) {
       const error = err as Error;
       let errorMessage = 'Sign up failed';
