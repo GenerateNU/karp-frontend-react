@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCreateEvent } from '@/hooks/useEvents';
-import type { CreateEventRequest } from '@/types/event';
+import type { CreateEventRequest, Status, Event } from '@/types/event';
+import { updateEvent } from '@/api/event';
+import { useQueryClient } from '@tanstack/react-query';
+import { eventKeys } from '@/hooks/useEvents';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,9 +13,15 @@ import { uploadImage } from '@/api/utils/image';
 
 interface EventFormProps {
   onSuccess?: () => void;
+  mode?: 'create' | 'edit';
+  initialEvent?: Event | null;
 }
 
-export function EventForm({ onSuccess }: EventFormProps) {
+export function EventForm({
+  onSuccess,
+  mode = 'create',
+  initialEvent = null,
+}: EventFormProps) {
   const [formData, setFormData] = useState<Partial<CreateEventRequest>>({
     name: '',
     address: '',
@@ -28,10 +37,30 @@ export function EventForm({ onSuccess }: EventFormProps) {
 
   const createEventMutation = useCreateEvent();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [submittingAction, setSubmittingAction] = useState<
+    'create' | 'draft' | null
+  >(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Pre-populate when editing
+  useEffect(() => {
+    if (!initialEvent) return;
+    setFormData({
+      name: initialEvent.name,
+      address: initialEvent.address,
+      start_date_time: initialEvent.start_date_time,
+      end_date_time: initialEvent.end_date_time,
+      max_volunteers: initialEvent.max_volunteers,
+      manual_difficulty_coefficient: initialEvent.manual_difficulty_coefficient,
+      description: initialEvent.description ?? '',
+      keywords: initialEvent.keywords ?? [],
+      age_min: initialEvent.age_min ?? 0,
+      age_max: initialEvent.age_max ?? 0,
+    });
+  }, [initialEvent]);
 
+  async function submitEvent(action: 'create' | 'draft') {
     if (
       !formData.name ||
       !formData.address ||
@@ -43,8 +72,19 @@ export function EventForm({ onSuccess }: EventFormProps) {
     }
 
     try {
+      setSubmittingAction(action);
+      const statusOverride: Status | undefined =
+        action === 'draft' ? 'DRAFT' : undefined;
+      const payload = { ...(formData as CreateEventRequest) } as Record<
+        string,
+        unknown
+      >;
+      if (statusOverride) {
+        // Add status for draft without changing types
+        payload.status = statusOverride;
+      }
       const newEvent = await createEventMutation.mutateAsync(
-        formData as CreateEventRequest
+        payload as unknown as CreateEventRequest
       );
       if (imageFile) {
         const uploadResult = await uploadImage('event', newEvent.id, imageFile);
@@ -55,6 +95,33 @@ export function EventForm({ onSuccess }: EventFormProps) {
     } catch (error) {
       console.error('Failed to create event:', error);
       alert('Failed to create event');
+    } finally {
+      setSubmittingAction(null);
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mode === 'edit' && initialEvent) {
+      // Call update endpoint
+      try {
+        setSavingEdit(true);
+        await updateEvent({
+          id: initialEvent.id,
+          ...(formData as Record<string, unknown>),
+        } as never);
+        // Ensure lists are refreshed
+        queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+        alert('Event updated successfully!');
+        onSuccess?.();
+      } catch (error) {
+        console.error('Failed to update event:', error);
+        alert('Failed to update event');
+      } finally {
+        setSavingEdit(false);
+      }
+    } else {
+      await submitEvent('create'); // default flow
     }
   };
 
@@ -76,7 +143,9 @@ export function EventForm({ onSuccess }: EventFormProps) {
   return (
     <Card className="bg-karp-background">
       <CardHeader className="bg-karp-background">
-        <CardTitle className="text-karp-font">Create New Event</CardTitle>
+        <CardTitle className="text-karp-font">
+          {mode === 'edit' ? 'Edit Event' : 'Create New Event'}
+        </CardTitle>
       </CardHeader>
       <CardContent className="bg-karp-background">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -271,13 +340,35 @@ export function EventForm({ onSuccess }: EventFormProps) {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={createEventMutation.isPending}
-              className="flex-1"
-            >
-              {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
-            </Button>
+            {mode === 'edit' ? (
+              <Button type="submit" disabled={savingEdit} className="flex-1">
+                {savingEdit ? 'Saving...' : 'Save'}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={createEventMutation.isPending}
+                  className="flex-1"
+                  onClick={() => submitEvent('draft')}
+                >
+                  {submittingAction === 'draft' && createEventMutation.isPending
+                    ? 'Saving...'
+                    : 'Save as Draft'}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createEventMutation.isPending}
+                  className="flex-1"
+                >
+                  {submittingAction === 'create' &&
+                  createEventMutation.isPending
+                    ? 'Creating...'
+                    : 'Create Event'}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </CardContent>
