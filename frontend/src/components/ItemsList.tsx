@@ -63,8 +63,8 @@ export function ItemsList() {
           </div>
           <div className="mt-3 flex gap-2 flex-nowrap">
             {[
-              { label: 'Approved', value: 'APPROVED' },
               { label: 'Active', value: 'ACTIVE' },
+              { label: 'Approved', value: 'APPROVED' },
               { label: 'Published', value: 'PUBLISHED' },
               { label: 'Draft', value: 'DRAFT' },
               { label: 'Rejected', value: 'REJECTED' },
