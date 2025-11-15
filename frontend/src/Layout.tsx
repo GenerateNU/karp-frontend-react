@@ -28,17 +28,6 @@ const Layout = () => {
     navigate('/login', { replace: true });
   }
 
-  const linkStyle: React.CSSProperties = {
-    padding: '10px 12px',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    color: 'var(--karp-font)',
-    fontWeight: 500,
-    transition: 'background-color 0.2s',
-    fontSize: '14px',
-    display: 'block',
-  };
-
   return (
     <>
       <aside
@@ -78,22 +67,9 @@ const Layout = () => {
         )}
 
         {isAuthenticated && (
-          <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
-            <Link
-              to="/login"
-              onClick={handleLogout}
-              style={linkStyle}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor =
-                  'rgba(247, 88, 31, 0.1)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              Logout
-            </Link>
-          </div>
+          <Link to="/login" onClick={handleLogout}>
+            Logout
+          </Link>
         )}
       </aside>
       {/* spacer to offset fixed header height */}
