@@ -270,6 +270,29 @@ export function ItemsList() {
                               : 'Approve'}
                           </Button>
                         )}
+                        {item.status === 'PUBLISHED' && (
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setUpdatingItemId(item.id);
+                              updateItem.mutate(
+                                { id: item.id, item: { status: 'REJECTED' } },
+                                {
+                                  onSettled: () => {
+                                    setUpdatingItemId(null);
+                                  },
+                                }
+                              );
+                            }}
+                            disabled={anyPending}
+                          >
+                            {updateItem.isPending && updatingItemId === item.id
+                              ? 'Rejecting...'
+                              : 'Reject'}
+                          </Button>
+                        )}
                         {item.status === 'ACTIVE' && (
                           <Button
                             size="sm"
