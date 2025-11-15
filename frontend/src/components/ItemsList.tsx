@@ -196,6 +196,29 @@ export function ItemsList() {
                               ? 'Deactivating...'
                               : 'Deactivate'}
                           </Button>
+                        ) : item.status === 'APPROVED' ? (
+                          <Button
+                            size="sm"
+                            variant="success"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setUpdatingItemId(item.id);
+                              setUpdatingAction('activate');
+                              activateItem.mutate(item.id, {
+                                onSettled: () => {
+                                  setUpdatingItemId(null);
+                                  setUpdatingAction(null);
+                                },
+                              });
+                            }}
+                            disabled={anyPending}
+                          >
+                            {anyPending &&
+                            updatingItemId === item.id &&
+                            updatingAction === 'activate'
+                              ? 'Activating...'
+                              : 'Activate'}
+                          </Button>
                         ) : item.status !== 'DELETED' ? (
                           <Button
                             size="sm"
@@ -224,30 +247,30 @@ export function ItemsList() {
                       </>
                     ) : (
                       <>
-                        {item.status !== 'ACTIVE' ? (
+                        {item.status === 'PUBLISHED' && (
                           <Button
                             size="sm"
                             variant="success"
                             onClick={e => {
                               e.stopPropagation();
                               setUpdatingItemId(item.id);
-                              setUpdatingAction('activate');
-                              activateItem.mutate(item.id, {
-                                onSettled: () => {
-                                  setUpdatingItemId(null);
-                                  setUpdatingAction(null);
-                                },
-                              });
+                              updateItem.mutate(
+                                { id: item.id, item: { status: 'APPROVED' } },
+                                {
+                                  onSettled: () => {
+                                    setUpdatingItemId(null);
+                                  },
+                                }
+                              );
                             }}
                             disabled={anyPending}
                           >
-                            {anyPending &&
-                            updatingItemId === item.id &&
-                            updatingAction === 'activate'
-                              ? 'Activating...'
-                              : 'Activate'}
+                            {updateItem.isPending && updatingItemId === item.id
+                              ? 'Approving...'
+                              : 'Approve'}
                           </Button>
-                        ) : (
+                        )}
+                        {item.status === 'ACTIVE' && (
                           <Button
                             size="sm"
                             variant="destructive"
