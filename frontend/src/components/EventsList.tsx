@@ -191,6 +191,23 @@ export function EventsList() {
                               : 'Publish'}
                           </Button>
                         )}
+                        {isAdmin && status === 'PUBLISHED' && (
+                          <Button
+                            size="sm"
+                            variant="success"
+                            onClick={e => {
+                              e.stopPropagation();
+                              sendStatusUpdate(event.id, event, 'APPROVED');
+                            }}
+                            disabled={updateEvent.isPending}
+                          >
+                            {updateEvent.isPending &&
+                            updatingEventId === event.id &&
+                            updatingAction === null
+                              ? 'Approving...'
+                              : 'Approve'}
+                          </Button>
+                        )}
                         {normalizedStatus !== 'cancelled' && (
                           <Button
                             size="sm"
