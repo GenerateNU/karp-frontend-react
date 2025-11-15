@@ -124,7 +124,8 @@ export function ItemsList() {
                     Expires: {new Date(item.expiration).toLocaleDateString()}
                   </p>
                   <p className="text-karp-font/70 mt-2">
-                    Price: {item.price} coins
+                    Price:{' '}
+                    {isAdmin ? `${item.price} coins` : `$${item.price / 100}`}
                   </p>
                 </div>
                 <div className="text-right">

@@ -103,7 +103,7 @@ export function ItemForm({
       const payload: CreateItemRequest = {
         name: formData.name,
         expiration: formData.expiration,
-        price: parseFloat(formData.price),
+        dollar_price: parseFloat(formData.price),
       };
       const newItem = await createItemMutation.mutateAsync(payload);
       // Immediately persist price and optional draft status via edit endpoint
