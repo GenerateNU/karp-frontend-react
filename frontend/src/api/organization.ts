@@ -3,6 +3,7 @@ import type {
   Organization,
   UpdateOrganizationRequest,
 } from '@/types/organization';
+import type { OrganizationStatus } from '@/types/organization';
 
 type CreateOrganizationRequest = {
   name: string;
@@ -18,8 +19,14 @@ type OrganizationResponse = {
   [key: string]: unknown;
 };
 
-export async function getAllOrganizations(): Promise<Organization[]> {
-  return makeRequest<Organization[]>('/organization/all', 'GET');
+export async function getAllOrganizations(
+  status?: OrganizationStatus
+): Promise<Organization[]> {
+  const params = new URLSearchParams();
+  if (status) params.append('statuses', status);
+  const query = params.toString();
+  const path = query ? `/organization/all?${query}` : '/organization/all';
+  return makeRequest<Organization[]>(path, 'GET');
 }
 
 export async function createOrganization(

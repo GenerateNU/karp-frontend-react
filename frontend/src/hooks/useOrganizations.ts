@@ -1,16 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllOrganizations, updateOrganization } from '@/api/organization';
-import type { UpdateOrganizationRequest } from '@/types/organization';
+import type {
+  UpdateOrganizationRequest,
+  OrganizationStatus,
+} from '@/types/organization';
 
 export const organizationKeys = {
   all: ['organizations'] as const,
   lists: () => [...organizationKeys.all, 'list'] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...organizationKeys.lists(), { filters }] as const,
 };
 
-export function useOrganizations() {
+export function useOrganizations(status?: OrganizationStatus) {
   return useQuery({
-    queryKey: organizationKeys.lists(),
-    queryFn: getAllOrganizations,
+    queryKey: organizationKeys.list({ status }),
+    queryFn: () => getAllOrganizations(status),
   });
 }
 

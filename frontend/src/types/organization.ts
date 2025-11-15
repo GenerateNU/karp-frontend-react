@@ -1,6 +1,6 @@
 export type OrganizationStatus =
   | 'APPROVED'
-  | 'IN_REVIEW'
+  | 'PENDING'
   | 'REJECTED'
   | 'DELETED';
 
