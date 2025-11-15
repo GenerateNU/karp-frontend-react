@@ -22,6 +22,10 @@ export function ItemsList() {
   const editItemCoins = useEditItemCoins();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
+  const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+  const [updatingAction, setUpdatingAction] = useState<
+    'activate' | 'deactivate' | null
+  >(null);
 
   const { user } = useAuth();
   const isAdmin = user?.user_type === 'ADMIN';
@@ -33,6 +37,8 @@ export function ItemsList() {
   if (error) {
     return <div className="p-4 text-karp-orange">Error loading items</div>;
   }
+
+  const anyPending = activateItem.isPending || deactivateItem.isPending;
 
   return (
     <div className="p-4">
@@ -86,7 +92,7 @@ export function ItemsList() {
         </div>
       </div>
       {/* spacer to offset the fixed title bar */}
-      <div style={{ height: 72 }} />
+      <div style={{ height: 110 }} />
 
       {items && items.length > 0 ? (
         <div className="mx-auto w-full min-w-[1100px] grid gap-4">
@@ -132,19 +138,43 @@ export function ItemsList() {
                       <Button
                         size="sm"
                         variant="success"
-                        onClick={() => activateItem.mutate(item.id)}
-                        disabled={activateItem.isPending}
+                        onClick={() => {
+                          setUpdatingItemId(item.id);
+                          setUpdatingAction('activate');
+                          activateItem.mutate(item.id, {
+                            onSettled: () => {
+                              setUpdatingItemId(null);
+                              setUpdatingAction(null);
+                            },
+                          });
+                        }}
+                        disabled={anyPending}
                       >
-                        {activateItem.isPending ? 'Activating...' : 'Activate'}
+                        {anyPending &&
+                        updatingItemId === item.id &&
+                        updatingAction === 'activate'
+                          ? 'Activating...'
+                          : 'Activate'}
                       </Button>
                     ) : (
                       <Button
                         size="sm"
                         variant="destructive"
-                        onClick={() => deactivateItem.mutate(item.id)}
-                        disabled={deactivateItem.isPending}
+                        onClick={() => {
+                          setUpdatingItemId(item.id);
+                          setUpdatingAction('deactivate');
+                          deactivateItem.mutate(item.id, {
+                            onSettled: () => {
+                              setUpdatingItemId(null);
+                              setUpdatingAction(null);
+                            },
+                          });
+                        }}
+                        disabled={anyPending}
                       >
-                        {deactivateItem.isPending
+                        {anyPending &&
+                        updatingItemId === item.id &&
+                        updatingAction === 'deactivate'
                           ? 'Deactivating...'
                           : 'Deactivate'}
                       </Button>
@@ -157,6 +187,7 @@ export function ItemsList() {
                           setEditingItemId(item.id);
                           setCoinValue(String(item.price ?? 0));
                         }}
+                        disabled={anyPending}
                       >
                         Edit Coins
                       </Button>
