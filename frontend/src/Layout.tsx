@@ -22,6 +22,10 @@ const Layout = () => {
     return ['ADMIN'].includes(userType);
   };
 
+  const canAccessAchievements = (userType: UserType) => {
+    return ['ADMIN'].includes(userType);
+  };
+
   function handleLogout() {
     logout();
     navigate('/login', { replace: true });
@@ -67,6 +71,11 @@ const Layout = () => {
         {user && canAccessVolunteers(user.user_type) && (
           <Link to="/volunteers" style={{ marginRight: 12 }}>
             Volunteers
+          </Link>
+        )}
+        {user && canAccessAchievements(user.user_type) && (
+          <Link to="/achievements" style={{ marginRight: 12 }}>
+            Achievements
           </Link>
         )}
         {isAuthenticated && (

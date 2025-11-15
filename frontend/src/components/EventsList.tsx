@@ -3,6 +3,7 @@ import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
+import type { UpdateEventRequest } from '@/types/event';
 import { useAuth } from '@/context/AuthContext';
 import type { Status, Event } from '@/types/event';
 import { useSearchParams } from 'react-router-dom';
@@ -23,8 +24,7 @@ export function EventsList() {
 
   function sendStatusUpdate(
     eventId: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    current: any,
+    current: UpdateEventRequest,
     newStatus: Status
   ) {
     updateEvent.mutate({

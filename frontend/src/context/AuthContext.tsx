@@ -80,6 +80,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [token]);
 
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (token && !user) {
+        try {
+          const userData = await getUserProfile();
+          setUser(userData);
+
+          if (userData.entity_id) {
+            const profile = await getProfileByUserType(userData.user_type);
+            setUserProfile(profile);
+          }
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+          // Only clear token if it's an authentication error (401/403)
+          // The error message from makeRequest includes the status code
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          if (
+            errorMessage.includes('401') ||
+            errorMessage.includes('403') ||
+            errorMessage.includes('Unauthorized') ||
+            errorMessage.includes('Forbidden')
+          ) {
+            console.log('Authentication error detected, clearing token');
+            setToken(null);
+          } else {
+            // For other errors (network, server errors, etc.), keep the token
+            // but log the error - user might still be authenticated
+            console.warn(
+              'Non-authentication error when loading user profile, keeping token'
+            );
+          }
+        }
+      }
+    };
+
+    loadUserData();
+  }, [token, user]);
+
   const login = useCallback(async (username: string, password: string) => {
     const res = await loginApi(username, password);
     const nextToken = res.access_token ?? '';
