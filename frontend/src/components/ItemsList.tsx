@@ -13,10 +13,19 @@ import { useSearchParams } from 'react-router-dom';
 import type { ItemStatus } from '@/types/item';
 
 export function ItemsList() {
+  const { user, userProfile } = useAuth();
+  const isAdmin = user?.user_type === 'ADMIN';
+
+  const vendorId = isAdmin ? undefined : userProfile?.id;
+
   const [searchParams, setSearchParams] = useSearchParams();
   const status = (searchParams.get('status') as ItemStatus) || 'APPROVED';
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: items, isLoading, error } = useItems(status);
+  const {
+    data: items,
+    isLoading,
+    error,
+  } = useItems(status, undefined, vendorId);
   const activateItem = useActivateItem();
   const deactivateItem = useDeactivateItem();
   const editItemCoins = useEditItemCoins();
@@ -26,9 +35,6 @@ export function ItemsList() {
   const [updatingAction, setUpdatingAction] = useState<
     'activate' | 'deactivate' | null
   >(null);
-
-  const { user } = useAuth();
-  const isAdmin = user?.user_type === 'ADMIN';
 
   if (isLoading) {
     return <div className="p-4">Loading items...</div>;
