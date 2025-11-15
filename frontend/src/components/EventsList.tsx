@@ -53,7 +53,7 @@ export function EventsList() {
         age_min: current.age_min,
         age_max: current.age_max,
         status: newStatus,
-      } as never,
+      },
       {
         onSettled: () => {
           setUpdatingEventId(null);
@@ -304,7 +304,7 @@ export function EventsList() {
                   {
                     id: ev.id,
                     coins: Number(coinValue),
-                  } as never,
+                  },
                   {
                     onSuccess: () => setEditingEventId(null),
                   }
