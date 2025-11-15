@@ -35,18 +35,18 @@ const Login = () => {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-karp-background">
       <div className="max-w-md w-full mx-4">
-        <Card className="bg-white shadow-lg">
-          <CardHeader className="bg-white">
-            <CardTitle className="text-2xl font-bold text-center text-gray-900">
+        <Card className="bg-karp-background shadow-lg">
+          <CardHeader className="bg-karp-background">
+            <CardTitle className="text-2xl font-bold text-center text-karp-font">
               Sign in
             </CardTitle>
           </CardHeader>
-          <CardContent className="bg-white">
+          <CardContent className="bg-karp-background">
             <form onSubmit={onSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-900">
+                <Label htmlFor="username" className="text-karp-font">
                   Username
                 </Label>
                 <Input
@@ -56,11 +56,11 @@ const Login = () => {
                   onChange={e => setUsername(e.target.value)}
                   required
                   placeholder="Enter your username"
-                  className="bg-white border-gray-300 text-gray-900"
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-900">
+                <Label htmlFor="password" className="text-karp-font">
                   Password
                 </Label>
                 <Input
@@ -70,11 +70,11 @@ const Login = () => {
                   onChange={e => setPassword(e.target.value)}
                   required
                   placeholder="Enter your password"
-                  className="bg-white border-gray-300 text-gray-900"
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
                 />
               </div>
               {error && (
-                <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-md p-3">
+                <div className="text-karp-orange text-sm bg-karp-orange/10 border border-karp-orange/30 rounded-md p-3">
                   {error}
                 </div>
               )}
