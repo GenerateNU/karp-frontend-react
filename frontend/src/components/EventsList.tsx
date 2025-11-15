@@ -134,7 +134,6 @@ export function EventsList() {
         {events && events.length > 0 ? (
           <div className="grid gap-4">
             {events.map(event => {
-              const normalizedStatus = String(event.status || '').toLowerCase();
               return (
                 <div
                   key={event.id}
@@ -160,11 +159,11 @@ export function EventsList() {
                     <div className="text-right">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          normalizedStatus === 'published'
+                          status === 'PUBLISHED'
                             ? 'bg-karp-green/20 text-karp-green'
-                            : normalizedStatus === 'draft'
+                            : status === 'DRAFT'
                               ? 'bg-karp-yellow/20 text-karp-yellow'
-                              : normalizedStatus === 'cancelled'
+                              : status === 'CANCELLED'
                                 ? 'bg-karp-orange/20 text-karp-orange'
                                 : 'bg-karp-font/10 text-karp-font'
                         }`}
@@ -176,133 +175,141 @@ export function EventsList() {
                         <p>Coins: {event.coins}</p>
                       </div>
                       <div className="mt-3 flex gap-2 justify-end">
-                        {normalizedStatus === 'draft' && (
-                          <Button
-                            size="sm"
-                            variant="success"
-                            onClick={e => {
-                              e.stopPropagation();
-                              sendStatusUpdate(event.id, event, 'PUBLISHED');
-                            }}
-                            disabled={updateEvent.isPending}
-                          >
-                            {updateEvent.isPending &&
-                            updatingEventId === event.id &&
-                            updatingAction === 'publish'
-                              ? 'Publishing...'
-                              : 'Publish'}
-                          </Button>
-                        )}
-                        {isAdmin && status === 'PUBLISHED' && (
-                          <Button
-                            size="sm"
-                            variant="success"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingEventId(event.id);
-                              setUpdatingAction('approve');
-                              updateEvent.mutate(
-                                {
-                                  id: event.id,
-                                  coins: event.coins,
-                                  name: event.name,
-                                  address: event.address,
-                                  start_date_time: event.start_date_time,
-                                  end_date_time: event.end_date_time,
-                                  max_volunteers: event.max_volunteers,
-                                  description: event.description,
-                                  keywords: event.keywords,
-                                  age_min: event.age_min,
-                                  age_max: event.age_max,
-                                  status: 'APPROVED',
-                                } as never,
-                                {
-                                  onSettled: () => {
-                                    setUpdatingEventId(null);
-                                    setUpdatingAction(null);
-                                  },
-                                }
-                              );
-                            }}
-                            disabled={updateEvent.isPending}
-                          >
-                            {updateEvent.isPending &&
-                            updatingEventId === event.id &&
-                            updatingAction === 'approve'
-                              ? 'Approving...'
-                              : 'Approve'}
-                          </Button>
-                        )}
-                        {isAdmin && status === 'PUBLISHED' && (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingEventId(event.id);
-                              setUpdatingAction('reject');
-                              updateEvent.mutate(
-                                {
-                                  id: event.id,
-                                  coins: event.coins,
-                                  name: event.name,
-                                  address: event.address,
-                                  start_date_time: event.start_date_time,
-                                  end_date_time: event.end_date_time,
-                                  max_volunteers: event.max_volunteers,
-                                  description: event.description,
-                                  keywords: event.keywords,
-                                  age_min: event.age_min,
-                                  age_max: event.age_max,
-                                  status: 'REJECTED',
-                                } as never,
-                                {
-                                  onSettled: () => {
-                                    setUpdatingEventId(null);
-                                    setUpdatingAction(null);
-                                  },
-                                }
-                              );
-                            }}
-                            disabled={updateEvent.isPending}
-                          >
-                            {updateEvent.isPending &&
-                            updatingEventId === event.id &&
-                            updatingAction === 'reject'
-                              ? 'Rejecting...'
-                              : 'Reject'}
-                          </Button>
-                        )}
-                        {normalizedStatus !== 'cancelled' && (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={e => {
-                              e.stopPropagation();
-                              sendStatusUpdate(event.id, event, 'CANCELLED');
-                            }}
-                            disabled={updateEvent.isPending}
-                          >
-                            {updateEvent.isPending &&
-                            updatingEventId === event.id &&
-                            updatingAction === 'cancel'
-                              ? 'Cancelling...'
-                              : 'Cancel'}
-                          </Button>
-                        )}
-                        {isAdmin && (
-                          <Button
-                            size="sm"
-                            variant="warning"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setEditingEventId(event.id);
-                              setCoinValue(String(event.coins ?? 0));
-                            }}
-                            disabled={updateEvent.isPending}
-                          >
-                            Edit Coins
-                          </Button>
+                        {!(status === 'REJECTED' || status === 'CANCELLED') && (
+                          <>
+                            {status === 'DRAFT' && (
+                              <Button
+                                size="sm"
+                                variant="success"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  sendStatusUpdate(
+                                    event.id,
+                                    event,
+                                    'PUBLISHED'
+                                  );
+                                }}
+                                disabled={updateEvent.isPending}
+                              >
+                                {updateEvent.isPending &&
+                                updatingEventId === event.id &&
+                                updatingAction === 'publish'
+                                  ? 'Publishing...'
+                                  : 'Publish'}
+                              </Button>
+                            )}
+                            {isAdmin && status === 'PUBLISHED' && (
+                              <Button
+                                size="sm"
+                                variant="success"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setUpdatingEventId(event.id);
+                                  setUpdatingAction('approve');
+                                  updateEvent.mutate(
+                                    {
+                                      id: event.id,
+                                      coins: event.coins,
+                                      name: event.name,
+                                      address: event.address,
+                                      start_date_time: event.start_date_time,
+                                      end_date_time: event.end_date_time,
+                                      max_volunteers: event.max_volunteers,
+                                      description: event.description,
+                                      keywords: event.keywords,
+                                      age_min: event.age_min,
+                                      age_max: event.age_max,
+                                      status: 'APPROVED',
+                                    } as never,
+                                    {
+                                      onSettled: () => {
+                                        setUpdatingEventId(null);
+                                        setUpdatingAction(null);
+                                      },
+                                    }
+                                  );
+                                }}
+                                disabled={updateEvent.isPending}
+                              >
+                                {updateEvent.isPending &&
+                                updatingEventId === event.id &&
+                                updatingAction === 'approve'
+                                  ? 'Approving...'
+                                  : 'Approve'}
+                              </Button>
+                            )}
+                            {isAdmin && status === 'PUBLISHED' && (
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setUpdatingEventId(event.id);
+                                  setUpdatingAction('reject');
+                                  updateEvent.mutate(
+                                    {
+                                      id: event.id,
+                                      coins: event.coins,
+                                      name: event.name,
+                                      address: event.address,
+                                      start_date_time: event.start_date_time,
+                                      end_date_time: event.end_date_time,
+                                      max_volunteers: event.max_volunteers,
+                                      description: event.description,
+                                      keywords: event.keywords,
+                                      age_min: event.age_min,
+                                      age_max: event.age_max,
+                                      status: 'REJECTED',
+                                    } as never,
+                                    {
+                                      onSettled: () => {
+                                        setUpdatingEventId(null);
+                                        setUpdatingAction(null);
+                                      },
+                                    }
+                                  );
+                                }}
+                                disabled={updateEvent.isPending}
+                              >
+                                {updateEvent.isPending &&
+                                updatingEventId === event.id &&
+                                updatingAction === 'reject'
+                                  ? 'Rejecting...'
+                                  : 'Reject'}
+                              </Button>
+                            )}
+                            {/* Cancel available when not cancelled or rejected already */}
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={e => {
+                                e.stopPropagation();
+                                sendStatusUpdate(event.id, event, 'CANCELLED');
+                              }}
+                              disabled={updateEvent.isPending}
+                            >
+                              {updateEvent.isPending &&
+                              updatingEventId === event.id &&
+                              updatingAction === 'cancel'
+                                ? 'Cancelling...'
+                                : 'Cancel'}
+                            </Button>
+                            {/* Edit Coins hidden for cancelled/rejected via outer guard */}
+                            {isAdmin && (
+                              <Button
+                                size="sm"
+                                variant="warning"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setEditingEventId(event.id);
+                                  setCoinValue(String(event.coins ?? 0));
+                                }}
+                                disabled={updateEvent.isPending}
+                              >
+                                Edit Coins
+                              </Button>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

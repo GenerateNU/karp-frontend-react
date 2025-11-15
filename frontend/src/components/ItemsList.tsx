@@ -146,7 +146,8 @@ export function ItemsList() {
                     <p>Vendor ID: {item.vendor_id}</p>
                   </div>
                   <div className="mt-3 flex gap-2 justify-end">
-                    {!isAdmin ? (
+                    {item.status === 'REJECTED' ||
+                    item.status === 'DELETED' ? null : !isAdmin ? (
                       <>
                         {item.status === 'DRAFT' && (
                           <Button
@@ -219,7 +220,7 @@ export function ItemsList() {
                               ? 'Activating...'
                               : 'Activate'}
                           </Button>
-                        ) : item.status !== 'DELETED' ? (
+                        ) : (
                           <Button
                             size="sm"
                             variant="destructive"
@@ -243,7 +244,7 @@ export function ItemsList() {
                               ? 'Deleting...'
                               : 'Delete'}
                           </Button>
-                        ) : null}
+                        )}
                       </>
                     ) : (
                       <>

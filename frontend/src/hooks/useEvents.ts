@@ -52,7 +52,7 @@ export function useCreateEvent() {
   return useMutation({
     mutationFn: createEvent,
     onSuccess: newEvent => {
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       queryClient.setQueryData(eventKeys.detail(newEvent.id), newEvent);
 
@@ -76,7 +76,7 @@ export function useUpdateEvent() {
         updatedEvent
       );
 
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       if (updatedEvent.organization_id) {
         queryClient.invalidateQueries({
@@ -95,7 +95,7 @@ export function useDeleteEvent() {
     onSuccess: (_, eventId) => {
       queryClient.removeQueries({ queryKey: eventKeys.detail(eventId) });
 
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       queryClient.invalidateQueries({ queryKey: eventKeys.all });
     },
