@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import type { UserType } from '@/types/user';
 
 const Layout = () => {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, userProfile } = useAuth();
   const navigate = useNavigate();
 
   const canAccessEvents = (userType: UserType) =>
@@ -50,11 +50,11 @@ const Layout = () => {
         }}
       >
         <Link to="/">Home</Link>
-        {user && canAccessEvents(user.user_type) && (
+        {user && userProfile && canAccessEvents(user.user_type) && (
           <Link to="/events">Events</Link>
         )}
 
-        {user && canAccessItems(user.user_type) && (
+        {user && userProfile && canAccessItems(user.user_type) && (
           <Link to="/items">Items</Link>
         )}
 
