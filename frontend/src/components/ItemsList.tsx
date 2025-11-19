@@ -148,108 +148,137 @@ export function ItemsList() {
                     <p>Vendor ID: {item.vendor_id}</p>
                   </div>
                   <div className="mt-3 flex gap-2 justify-end">
-                    {item.status === 'REJECTED' ||
-                    item.status === 'DELETED' ? null : !isAdmin ? (
-                      <>
-                        {item.status === 'DRAFT' && (
-                          <Button
-                            size="sm"
-                            variant="success"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingItemId(item.id);
-                              setUpdatingAction('activate'); // reuse pending tracker
-                              updateItem.mutate(
-                                { id: item.id, item: { status: 'PUBLISHED' } },
-                                {
+                    {!isAdmin ? (
+                      item.status === 'REJECTED' ||
+                      item.status === 'DELETED' ? null : (
+                        <>
+                          {item.status === 'DRAFT' && (
+                            <Button
+                              size="sm"
+                              variant="success"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setUpdatingItemId(item.id);
+                                setUpdatingAction('activate'); // reuse pending tracker
+                                updateItem.mutate(
+                                  {
+                                    id: item.id,
+                                    item: { status: 'PUBLISHED' },
+                                  },
+                                  {
+                                    onSettled: () => {
+                                      setUpdatingItemId(null);
+                                      setUpdatingAction(null);
+                                    },
+                                  }
+                                );
+                              }}
+                              disabled={anyPending}
+                            >
+                              {updateItem.isPending &&
+                              updatingItemId === item.id
+                                ? 'Publishing...'
+                                : 'Publish'}
+                            </Button>
+                          )}
+                          {item.status === 'ACTIVE' ? (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setUpdatingItemId(item.id);
+                                setUpdatingAction('deactivate');
+                                deactivateItem.mutate(item.id, {
                                   onSettled: () => {
                                     setUpdatingItemId(null);
                                     setUpdatingAction(null);
                                   },
-                                }
-                              );
-                            }}
-                            disabled={anyPending}
-                          >
-                            {updateItem.isPending && updatingItemId === item.id
-                              ? 'Publishing...'
-                              : 'Publish'}
-                          </Button>
-                        )}
-                        {item.status === 'ACTIVE' ? (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingItemId(item.id);
-                              setUpdatingAction('deactivate');
-                              deactivateItem.mutate(item.id, {
-                                onSettled: () => {
-                                  setUpdatingItemId(null);
-                                  setUpdatingAction(null);
-                                },
-                              });
-                            }}
-                            disabled={anyPending}
-                          >
-                            {anyPending &&
-                            updatingItemId === item.id &&
-                            updatingAction === 'deactivate'
-                              ? 'Deactivating...'
-                              : 'Deactivate'}
-                          </Button>
-                        ) : item.status === 'APPROVED' ? (
-                          <Button
-                            size="sm"
-                            variant="success"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingItemId(item.id);
-                              setUpdatingAction('activate');
-                              activateItem.mutate(item.id, {
-                                onSettled: () => {
-                                  setUpdatingItemId(null);
-                                  setUpdatingAction(null);
-                                },
-                              });
-                            }}
-                            disabled={anyPending}
-                          >
-                            {anyPending &&
-                            updatingItemId === item.id &&
-                            updatingAction === 'activate'
-                              ? 'Activating...'
-                              : 'Activate'}
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setUpdatingItemId(item.id);
-                              setUpdatingAction('deactivate'); // reuse tracker
-                              updateItem.mutate(
-                                { id: item.id, item: { status: 'DELETED' } },
-                                {
+                                });
+                              }}
+                              disabled={anyPending}
+                            >
+                              {anyPending &&
+                              updatingItemId === item.id &&
+                              updatingAction === 'deactivate'
+                                ? 'Deactivating...'
+                                : 'Deactivate'}
+                            </Button>
+                          ) : item.status === 'APPROVED' ? (
+                            <Button
+                              size="sm"
+                              variant="success"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setUpdatingItemId(item.id);
+                                setUpdatingAction('activate');
+                                activateItem.mutate(item.id, {
                                   onSettled: () => {
                                     setUpdatingItemId(null);
                                     setUpdatingAction(null);
                                   },
-                                }
-                              );
-                            }}
-                            disabled={anyPending}
-                          >
-                            {updateItem.isPending && updatingItemId === item.id
-                              ? 'Deleting...'
-                              : 'Delete'}
-                          </Button>
-                        )}
-                      </>
-                    ) : (
+                                });
+                              }}
+                              disabled={anyPending}
+                            >
+                              {anyPending &&
+                              updatingItemId === item.id &&
+                              updatingAction === 'activate'
+                                ? 'Activating...'
+                                : 'Activate'}
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setUpdatingItemId(item.id);
+                                setUpdatingAction('deactivate'); // reuse tracker
+                                updateItem.mutate(
+                                  { id: item.id, item: { status: 'DELETED' } },
+                                  {
+                                    onSettled: () => {
+                                      setUpdatingItemId(null);
+                                      setUpdatingAction(null);
+                                    },
+                                  }
+                                );
+                              }}
+                              disabled={anyPending}
+                            >
+                              {updateItem.isPending &&
+                              updatingItemId === item.id
+                                ? 'Deleting...'
+                                : 'Delete'}
+                            </Button>
+                          )}
+                        </>
+                      )
+                    ) : item.status === 'DELETED' ? null : (
                       <>
+                        {/* Admin Cancel available for all non-deleted statuses */}
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setUpdatingItemId(item.id);
+                            updateItem.mutate(
+                              { id: item.id, item: { status: 'DELETED' } },
+                              {
+                                onSettled: () => {
+                                  setUpdatingItemId(null);
+                                },
+                              }
+                            );
+                          }}
+                          disabled={anyPending}
+                        >
+                          {updateItem.isPending && updatingItemId === item.id
+                            ? 'Deleting...'
+                            : 'Delete'}
+                        </Button>
                         {item.status === 'PUBLISHED' && (
                           <Button
                             size="sm"
@@ -320,7 +349,8 @@ export function ItemsList() {
                               : 'Deactivate'}
                           </Button>
                         )}
-                        {isAdmin && (
+                        {/* Hide Edit Coins for rejected items */}
+                        {isAdmin && item.status !== 'REJECTED' && (
                           <Button
                             size="sm"
                             variant="warning"
