@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCreateEvent } from '@/hooks/useEvents';
-import type { CreateEventRequest } from '@/types/event';
+import type { CreateEventRequest, EventStatus, Event } from '@/types/event';
+import { updateEvent } from '@/api/event';
+import { useQueryClient } from '@tanstack/react-query';
+import { eventKeys } from '@/hooks/useEvents';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,16 +13,22 @@ import { uploadImage } from '@/api/utils/image';
 
 interface EventFormProps {
   onSuccess?: () => void;
+  mode?: 'create' | 'edit';
+  initialEvent?: Event | null;
 }
 
-export function EventForm({ onSuccess }: EventFormProps) {
+export function EventForm({
+  onSuccess,
+  mode = 'create',
+  initialEvent = null,
+}: EventFormProps) {
   const [formData, setFormData] = useState<Partial<CreateEventRequest>>({
     name: '',
     address: '',
     start_date_time: '',
     end_date_time: '',
     max_volunteers: 0,
-    coins: 0,
+    manual_difficulty_coefficient: 0,
     description: '',
     keywords: [],
     age_min: 0,
@@ -28,10 +37,30 @@ export function EventForm({ onSuccess }: EventFormProps) {
 
   const createEventMutation = useCreateEvent();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [submittingAction, setSubmittingAction] = useState<
+    'create' | 'draft' | null
+  >(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Pre-populate when editing
+  useEffect(() => {
+    if (!initialEvent) return;
+    setFormData({
+      name: initialEvent.name,
+      address: initialEvent.address,
+      start_date_time: initialEvent.start_date_time,
+      end_date_time: initialEvent.end_date_time,
+      max_volunteers: initialEvent.max_volunteers,
+      manual_difficulty_coefficient: initialEvent.manual_difficulty_coefficient,
+      description: initialEvent.description ?? '',
+      keywords: initialEvent.keywords ?? [],
+      age_min: initialEvent.age_min ?? 0,
+      age_max: initialEvent.age_max ?? 0,
+    });
+  }, [initialEvent]);
 
+  async function submitEvent(action: 'create' | 'draft') {
     if (
       !formData.name ||
       !formData.address ||
@@ -43,11 +72,22 @@ export function EventForm({ onSuccess }: EventFormProps) {
     }
 
     try {
+      setSubmittingAction(action);
+      const statusOverride: EventStatus | undefined =
+        action === 'draft' ? 'DRAFT' : undefined;
+      const payload = { ...(formData as CreateEventRequest) } as Record<
+        string,
+        unknown
+      >;
+      if (statusOverride) {
+        // Add status for draft without changing types
+        payload.status = statusOverride;
+      }
       const newEvent = await createEventMutation.mutateAsync(
-        formData as CreateEventRequest
+        payload as unknown as CreateEventRequest
       );
       if (imageFile) {
-        const uploadResult = await uploadImage("event", newEvent.id, imageFile);
+        const uploadResult = await uploadImage('event', newEvent.id, imageFile);
         formData.image_url = uploadResult.upload_url;
       }
       alert('Event created successfully!');
@@ -55,6 +95,33 @@ export function EventForm({ onSuccess }: EventFormProps) {
     } catch (error) {
       console.error('Failed to create event:', error);
       alert('Failed to create event');
+    } finally {
+      setSubmittingAction(null);
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mode === 'edit' && initialEvent) {
+      // Call update endpoint
+      try {
+        setSavingEdit(true);
+        await updateEvent({
+          id: initialEvent.id,
+          ...(formData as Record<string, unknown>),
+        } as never);
+        // Ensure lists are refreshed
+        queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+        alert('Event updated successfully!');
+        onSuccess?.();
+      } catch (error) {
+        console.error('Failed to update event:', error);
+        alert('Failed to update event');
+      } finally {
+        setSavingEdit(false);
+      }
+    } else {
+      await submitEvent('create'); // default flow
     }
   };
 
@@ -67,19 +134,23 @@ export function EventForm({ onSuccess }: EventFormProps) {
     setFormData(prev => ({
       ...prev,
       [name]:
-        name === 'max_volunteers' || name === 'coins' ? Number(value) : value,
+        name === 'max_volunteers' || name === 'manual_difficulty_coefficient'
+          ? Number(value)
+          : value,
     }));
   };
 
   return (
-    <Card className="bg-white">
-      <CardHeader className="bg-white">
-        <CardTitle className="text-gray-900">Create New Event</CardTitle>
+    <Card className="bg-karp-background">
+      <CardHeader className="bg-karp-background">
+        <CardTitle className="text-karp-font">
+          {mode === 'edit' ? 'Edit Event' : 'Create New Event'}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="bg-white">
+      <CardContent className="bg-karp-background">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-900">
+            <Label htmlFor="name" className="text-karp-font">
               Event Name *
             </Label>
             <Input
@@ -89,12 +160,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               required
               placeholder="Enter event name"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address" className="text-gray-900">
+            <Label htmlFor="address" className="text-karp-font">
               Address *
             </Label>
             <Input
@@ -104,13 +175,13 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               required
               placeholder="Enter event address"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="start_date_time" className="text-gray-900">
+              <Label htmlFor="start_date_time" className="text-karp-font">
                 Start Date & Time *
               </Label>
               <Input
@@ -120,12 +191,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 value={formData.start_date_time}
                 onChange={handleChange}
                 required
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end_date_time" className="text-gray-900">
+              <Label htmlFor="end_date_time" className="text-karp-font">
                 End Date & Time *
               </Label>
               <Input
@@ -135,14 +206,14 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 value={formData.end_date_time}
                 onChange={handleChange}
                 required
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="max_volunteers" className="text-gray-900">
+              <Label htmlFor="max_volunteers" className="text-karp-font">
                 Max Volunteers
               </Label>
               <Input
@@ -153,30 +224,34 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="coins" className="text-gray-900">
-                Coins
+              <Label
+                htmlFor="manual_difficulty_coefficient"
+                className="text-karp-font"
+              >
+                Difficulty
               </Label>
-              <Input
-                type="number"
-                id="coins"
-                name="coins"
-                value={formData.coins}
+              <select
+                id="manual_difficulty_coefficient"
+                name="manual_difficulty_coefficient"
+                value={String(formData.manual_difficulty_coefficient ?? 0)}
                 onChange={handleChange}
-                min="0"
-                placeholder="0"
-                className="bg-white border-gray-300 text-gray-900"
-              />
+                className="bg-karp-background border border-karp-font/20 text-karp-font rounded-md px-3 py-2"
+              >
+                <option value="0">Easy</option>
+                <option value="1">Moderate</option>
+                <option value="2">Difficult</option>
+              </select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="age_min" className="text-gray-900">
+              <Label htmlFor="age_min" className="text-karp-font">
                 Minimum Age
               </Label>
               <Input
@@ -187,12 +262,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="age_max" className="text-gray-900">
+              <Label htmlFor="age_max" className="text-karp-font">
                 Maximum Age
               </Label>
               <Input
@@ -203,13 +278,13 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 onChange={handleChange}
                 min="0"
                 placeholder="0"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-900">
+            <Label htmlFor="description" className="text-karp-font">
               Description
             </Label>
             <Textarea
@@ -219,12 +294,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
               onChange={handleChange}
               rows={4}
               placeholder="Enter event description"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="keywords" className="text-gray-900">
+            <Label htmlFor="keywords" className="text-karp-font">
               Keywords
             </Label>
             <Input
@@ -243,12 +318,12 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 setFormData(prev => ({ ...prev, keywords }));
               }}
               placeholder="Enter keywords separated by commas"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-gray-900">
+            <Label htmlFor="image" className="text-karp-font">
               Upload Image
             </Label>
             <Input
@@ -260,18 +335,40 @@ export function EventForm({ onSuccess }: EventFormProps) {
                 const file = e.target.files?.[0] || null;
                 setImageFile(file);
               }}
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={createEventMutation.isPending}
-              className="flex-1"
-            >
-              {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
-            </Button>
+            {mode === 'edit' ? (
+              <Button type="submit" disabled={savingEdit} className="flex-1">
+                {savingEdit ? 'Saving...' : 'Save'}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={createEventMutation.isPending}
+                  className="flex-1"
+                  onClick={() => submitEvent('draft')}
+                >
+                  {submittingAction === 'draft' && createEventMutation.isPending
+                    ? 'Saving...'
+                    : 'Save as Draft'}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createEventMutation.isPending}
+                  className="flex-1"
+                >
+                  {submittingAction === 'create' &&
+                  createEventMutation.isPending
+                    ? 'Creating...'
+                    : 'Create Event'}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </CardContent>

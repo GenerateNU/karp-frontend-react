@@ -5,21 +5,30 @@ import type {
   UpdateItemRequest,
   ItemSortParam,
   SortOrder,
+  ItemStatus,
 } from '@/types/item';
 
 export const itemApi = {
   // Get all items with optional filters
   getItems: async (
+    status?: ItemStatus,
     searchText?: string,
     vendorId?: string,
     sortBy?: ItemSortParam,
     sortOrder: SortOrder = 'asc'
   ): Promise<Item[]> => {
     const params = new URLSearchParams();
+    if (status) params.append('status', status);
     if (searchText) params.append('search_text', searchText);
     if (vendorId) params.append('vendor_id', vendorId);
-    if (sortBy) params.append('sort_by', sortBy);
-    params.append('sort_order', sortOrder);
+    if (sortBy) {
+      // params.append('sort_by', sortBy);
+    }
+    if (sortOrder) {
+      // params.append('sort_order', sortOrder);
+    }
+    params.append('sort_by', 'created_at');
+    params.append('sort_order', 'desc');
 
     return makeRequest<Item[]>(`/item/all?${params.toString()}`, 'GET');
   },
@@ -33,14 +42,26 @@ export const itemApi = {
   },
 
   updateItem: async (id: string, item: UpdateItemRequest): Promise<void> => {
-    await makeRequest<void>(`/item/${id}`, 'PUT', item);
+    await makeRequest<void>(`/item/edit/${id}`, 'PUT', item);
   },
 
   deactivateItem: async (id: string): Promise<void> => {
-    await makeRequest<void>(`/item/${id}/deactivate`, 'DELETE');
+    await makeRequest<void>(`/item/deactivate/${id}`, 'PUT');
   },
 
   activateItem: async (id: string): Promise<void> => {
-    await makeRequest<void>(`/item/${id}/activate`, 'POST');
+    await makeRequest<void>(`/item/activate/${id}`, 'PUT');
+  },
+
+  editItem: async (
+    id: string,
+    item: {
+      name: string;
+      price: number;
+      expiration: string;
+      status: ItemStatus;
+    }
+  ): Promise<void> => {
+    await makeRequest<void>(`/item/edit/${id}`, 'PUT', item);
   },
 };

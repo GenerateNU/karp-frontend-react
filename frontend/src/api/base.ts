@@ -1,5 +1,16 @@
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
+export class HttpError extends Error {
+  status: number;
+  body: string;
+  constructor(status: number, statusText: string, body: string) {
+    super(`Request failed: ${status} ${statusText}`);
+    this.name = 'HttpError';
+    this.status = status;
+    this.body = body;
+  }
+}
+
 export async function makeRequest<T>(
   path: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
@@ -19,9 +30,7 @@ export async function makeRequest<T>(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `Request failed: ${response.status} ${response.statusText} - ${errorText}`
-    );
+    throw new HttpError(response.status, response.statusText, errorText);
   }
 
   return response.json() as Promise<T>;

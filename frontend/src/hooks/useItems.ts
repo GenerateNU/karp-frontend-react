@@ -5,17 +5,20 @@ import type {
   UpdateItemRequest,
   ItemSortParam,
   SortOrder,
+  ItemStatus,
 } from '@/types/item';
 
 export function useItems(
+  status?: ItemStatus,
   searchText?: string,
   vendorId?: string,
   sortBy?: ItemSortParam,
   sortOrder: SortOrder = 'asc'
 ) {
   return useQuery({
-    queryKey: ['items', searchText, vendorId, sortBy, sortOrder],
-    queryFn: () => itemApi.getItems(searchText, vendorId, sortBy, sortOrder),
+    queryKey: ['items', status, searchText, vendorId, sortBy, sortOrder],
+    queryFn: () =>
+      itemApi.getItems(status, searchText, vendorId, sortBy, sortOrder),
   });
 }
 
@@ -44,6 +47,29 @@ export function useUpdateItem() {
   return useMutation({
     mutationFn: ({ id, item }: { id: string; item: UpdateItemRequest }) =>
       itemApi.updateItem(id, item),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+      queryClient.invalidateQueries({ queryKey: ['item', id] });
+    },
+  });
+}
+
+export function useEditItemCoins() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: {
+        name: string;
+        price: number;
+        expiration: string;
+        status: string;
+      };
+    }) => itemApi.editItem(id, payload as never),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
       queryClient.invalidateQueries({ queryKey: ['item', id] });

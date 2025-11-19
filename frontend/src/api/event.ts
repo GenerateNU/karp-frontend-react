@@ -3,6 +3,7 @@ import type {
   Event,
   CreateEventRequest,
   UpdateEventRequest,
+  EventStatus,
 } from '@/types/event';
 
 export async function createEvent(
@@ -15,8 +16,20 @@ export async function getEvent(eventId: string): Promise<Event> {
   return makeRequest<Event>(`/event/${eventId}`, 'GET');
 }
 
-export async function getAllEvents(): Promise<Event[]> {
-  return makeRequest<Event[]>('/event/all', 'GET');
+export async function getAllEvents(
+  status: EventStatus,
+  organizationId: string | undefined
+): Promise<Event[]> {
+  const params = new URLSearchParams();
+
+  if (organizationId) {
+    params.append('organization_id', organizationId);
+  }
+
+  return makeRequest<Event[]>(
+    `/event/search?statuses=${status}&sort_by=created_at&sort_dir=desc&${params.toString()}`,
+    'GET'
+  );
 }
 
 export async function updateEvent(

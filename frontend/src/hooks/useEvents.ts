@@ -7,6 +7,7 @@ import {
   deleteEvent,
   getEventsByOrganization,
 } from '@/api/event';
+import type { EventStatus } from '@/types/event';
 
 export const eventKeys = {
   all: ['events'] as const,
@@ -19,10 +20,13 @@ export const eventKeys = {
     [...eventKeys.all, 'organization', organizationId] as const,
 };
 
-export function useEvents() {
+export function useEvents(
+  status: EventStatus,
+  organizationId: string | undefined
+) {
   return useQuery({
-    queryKey: eventKeys.lists(),
-    queryFn: getAllEvents,
+    queryKey: ['event', status, organizationId],
+    queryFn: () => getAllEvents(status, organizationId),
   });
 }
 
@@ -48,7 +52,7 @@ export function useCreateEvent() {
   return useMutation({
     mutationFn: createEvent,
     onSuccess: newEvent => {
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       queryClient.setQueryData(eventKeys.detail(newEvent.id), newEvent);
 
@@ -72,7 +76,7 @@ export function useUpdateEvent() {
         updatedEvent
       );
 
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       if (updatedEvent.organization_id) {
         queryClient.invalidateQueries({
@@ -91,7 +95,7 @@ export function useDeleteEvent() {
     onSuccess: (_, eventId) => {
       queryClient.removeQueries({ queryKey: eventKeys.detail(eventId) });
 
-      queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['event'] });
 
       queryClient.invalidateQueries({ queryKey: eventKeys.all });
     },
