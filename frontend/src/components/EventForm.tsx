@@ -43,14 +43,33 @@ export function EventForm({
   const [savingEdit, setSavingEdit] = useState(false);
   const queryClient = useQueryClient();
 
+  const isoToDatetimeLocal = (isoString: string): string => {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const datetimeLocalToISO = (datetimeLocal: string): string => {
+    const date = new Date(datetimeLocal);
+    return date.toISOString();
+  };
+
   // Pre-populate when editing
   useEffect(() => {
     if (!initialEvent) return;
     setFormData({
       name: initialEvent.name,
       address: initialEvent.address,
-      start_date_time: initialEvent.start_date_time,
-      end_date_time: initialEvent.end_date_time,
+      start_date_time: initialEvent.start_date_time
+        ? isoToDatetimeLocal(initialEvent.start_date_time)
+        : '',
+      end_date_time: initialEvent.end_date_time
+        ? isoToDatetimeLocal(initialEvent.end_date_time)
+        : '',
       max_volunteers: initialEvent.max_volunteers,
       manual_difficulty_coefficient: initialEvent.manual_difficulty_coefficient,
       description: initialEvent.description ?? '',
@@ -79,6 +98,8 @@ export function EventForm({
         string,
         unknown
       >;
+      payload.start_date_time = datetimeLocalToISO(formData.start_date_time);
+      payload.end_date_time = datetimeLocalToISO(formData.end_date_time);
       if (statusOverride) {
         // Add status for draft without changing types
         payload.status = statusOverride;
@@ -106,9 +127,20 @@ export function EventForm({
       // Call update endpoint
       try {
         setSavingEdit(true);
+        const updatePayload = { ...(formData as Record<string, unknown>) };
+        if (updatePayload.start_date_time) {
+          updatePayload.start_date_time = datetimeLocalToISO(
+            updatePayload.start_date_time as string
+          );
+        }
+        if (updatePayload.end_date_time) {
+          updatePayload.end_date_time = datetimeLocalToISO(
+            updatePayload.end_date_time as string
+          );
+        }
         await updateEvent({
           id: initialEvent.id,
-          ...(formData as Record<string, unknown>),
+          ...updatePayload,
         } as never);
         // Ensure lists are refreshed
         queryClient.invalidateQueries({ queryKey: eventKeys.lists() });
