@@ -42,6 +42,7 @@ export function EventForm({
   >(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const queryClient = useQueryClient();
+  const [keywordsInput, setKeywordsInput] = useState('');
 
   const isoToDatetimeLocal = (isoString: string): string => {
     const date = new Date(isoString);
@@ -77,6 +78,11 @@ export function EventForm({
       age_min: initialEvent.age_min ?? 0,
       age_max: initialEvent.age_max ?? 0,
     });
+    if (Array.isArray(initialEvent.keywords)) {
+      setKeywordsInput(initialEvent.keywords.join(', '));
+    } else {
+      setKeywordsInput('');
+    }
   }, [initialEvent]);
 
   async function submitEvent(action: 'create' | 'draft') {
@@ -338,13 +344,10 @@ export function EventForm({
               <Input
                 id="keywords"
                 name="keywords"
-                value={
-                  Array.isArray(formData.keywords)
-                    ? formData.keywords.join(', ')
-                    : formData.keywords || ''
-                }
-                onChange={e => {
-                  const keywords = e.target.value
+                value={keywordsInput}
+                onChange={e => setKeywordsInput(e.target.value)}
+                onBlur={() => {
+                  const keywords = keywordsInput
                     .split(',')
                     .map(k => k.trim())
                     .filter(k => k);
