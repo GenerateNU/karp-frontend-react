@@ -75,3 +75,15 @@ export async function uploadEventImage(
   // Step 3 — Return the file URL (S3 key)
   return { upload_url: (await presignedData).upload_url };
 }
+
+export async function generateEventQRCodes(
+  eventId: string,
+): Promise<Event> {
+  const updatedEventData = await makeRequest<Event>(
+    `/event/${eventId}/generate-qr-codes`,
+    'GET'
+  );
+
+  return updatedEventData
+
+}

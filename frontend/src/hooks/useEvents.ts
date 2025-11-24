@@ -6,6 +6,7 @@ import {
   updateEvent,
   deleteEvent,
   getEventsByOrganization,
+  generateEventQRCodes
 } from '@/api/event';
 import type { EventStatus } from '@/types/event';
 
@@ -99,5 +100,22 @@ export function useDeleteEvent() {
 
       queryClient.invalidateQueries({ queryKey: eventKeys.all });
     },
+  });
+}
+
+export function useGenerateEventQrCodes() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: generateEventQRCodes,
+    onSuccess: (data, eventId) => {
+
+      queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
+
+      queryClient.invalidateQueries({ queryKey: ['event'] });
+    },
+    onError: () => {
+      alert('Failed to generate QR Codes');
+    }
   });
 }

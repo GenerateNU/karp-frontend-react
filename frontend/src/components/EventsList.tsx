@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
+import { useEvents, useGenerateEventQrCodes, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ export function EventsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { data: events, isLoading, error } = useEvents(status, organizationId);
   const updateEvent = useUpdateEvent();
+  const generateEventQRCodes = useGenerateEventQrCodes();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -190,6 +191,26 @@ export function EventsList() {
                           }}
                         >
                           Edit
+                        </Button>
+                      </div>
+
+                      <div className="mt-3 flex gap-2  justify-end">
+                        {/* EDIT BUTTON — triggers setEditingEvent */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          // className="!bg-grey !text-black hover:!bg-black/80"
+                          onClick={e => {
+                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            generateEventQRCodes.mutate(event.id, {
+                            onSuccess: () => {
+                              alert("QR Codes Generated!");
+                            }
+                          });
+                          }}
+                          disabled={generateEventQRCodes.isPending}
+                        >
+                          {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
                         </Button>
                       </div>
                       
