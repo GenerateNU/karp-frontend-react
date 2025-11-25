@@ -42,6 +42,7 @@ export function EventForm({
   >(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const queryClient = useQueryClient();
+  const [keywordsInput, setKeywordsInput] = useState('');
 
   const isoToDatetimeLocal = (isoString: string): string => {
     const date = new Date(isoString);
@@ -77,6 +78,11 @@ export function EventForm({
       age_min: initialEvent.age_min ?? 0,
       age_max: initialEvent.age_max ?? 0,
     });
+    if (Array.isArray(initialEvent.keywords)) {
+      setKeywordsInput(initialEvent.keywords.join(', '));
+    } else {
+      setKeywordsInput('');
+    }
   }, [initialEvent]);
 
   async function submitEvent(action: 'create' | 'draft') {
@@ -173,237 +179,236 @@ export function EventForm({
   };
 
   return (
-    <Card className="bg-karp-background">
+    <Card className="bg-karp-background h-[90vh] flex flex-col scale-90 -mt-15">
       <CardHeader className="bg-karp-background">
         <CardTitle className="text-karp-font">
           {mode === 'edit' ? 'Edit Event' : 'Create New Event'}
         </CardTitle>
       </CardHeader>
-      <CardContent className="bg-karp-background">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-karp-font">
-              Event Name *
-            </Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter event name"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="address" className="text-karp-font">
-              Address *
-            </Label>
-            <Input
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              placeholder="Enter event address"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* <div className="h-screen p-6 bg-gray-50 overflow-y-auto"> */}
+        <CardContent className="bg-karp-background h-full overflow-y-auto flex flex-col">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="start_date_time" className="text-karp-font">
-                Start Date & Time *
+              <Label htmlFor="name" className="text-karp-font">
+                Event Name *
               </Label>
               <Input
-                type="datetime-local"
-                id="start_date_time"
-                name="start_date_time"
-                value={formData.start_date_time}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 required
+                placeholder="Enter event name"
                 className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end_date_time" className="text-karp-font">
-                End Date & Time *
+              <Label htmlFor="address" className="text-karp-font">
+                Address *
               </Label>
               <Input
-                type="datetime-local"
-                id="end_date_time"
-                name="end_date_time"
-                value={formData.end_date_time}
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
                 required
-                className="bg-karp-background border-karp-font/20 text-karp-font"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="max_volunteers" className="text-karp-font">
-                Max Volunteers
-              </Label>
-              <Input
-                type="number"
-                id="max_volunteers"
-                name="max_volunteers"
-                value={formData.max_volunteers}
-                onChange={handleChange}
-                min="0"
-                placeholder="0"
+                placeholder="Enter event address"
                 className="bg-karp-background border-karp-font/20 text-karp-font"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label
-                htmlFor="manual_difficulty_coefficient"
-                className="text-karp-font"
-              >
-                Difficulty
-              </Label>
-              <select
-                id="manual_difficulty_coefficient"
-                name="manual_difficulty_coefficient"
-                value={String(formData.manual_difficulty_coefficient ?? 0)}
-                onChange={handleChange}
-                className="bg-karp-background border border-karp-font/20 text-karp-font rounded-md px-3 py-2"
-              >
-                <option value="0">Easy</option>
-                <option value="1">Moderate</option>
-                <option value="2">Difficult</option>
-              </select>
-            </div>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="start_date_time" className="text-karp-font">
+                  Start Date & Time *
+                </Label>
+                <Input
+                  type="datetime-local"
+                  id="start_date_time"
+                  name="start_date_time"
+                  value={formData.start_date_time}
+                  onChange={handleChange}
+                  required
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="age_min" className="text-karp-font">
-                Minimum Age
-              </Label>
-              <Input
-                type="number"
-                id="age_min"
-                name="age_min"
-                value={formData.age_min}
-                onChange={handleChange}
-                min="0"
-                placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="end_date_time" className="text-karp-font">
+                  End Date & Time *
+                </Label>
+                <Input
+                  type="datetime-local"
+                  id="end_date_time"
+                  name="end_date_time"
+                  value={formData.end_date_time}
+                  onChange={handleChange}
+                  required
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="age_max" className="text-karp-font">
-                Maximum Age
-              </Label>
-              <Input
-                type="number"
-                id="age_max"
-                name="age_max"
-                value={formData.age_max}
-                onChange={handleChange}
-                min="0"
-                placeholder="0"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
-              />
-            </div>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="max_volunteers" className="text-karp-font">
+                  Max Volunteers
+                </Label>
+                <Input
+                  type="number"
+                  id="max_volunteers"
+                  name="max_volunteers"
+                  value={formData.max_volunteers}
+                  onChange={handleChange}
+                  min="0"
+                  placeholder="0"
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-karp-font">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description || ''}
-              onChange={handleChange}
-              rows={4}
-              placeholder="Enter event description"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="keywords" className="text-karp-font">
-              Keywords
-            </Label>
-            <Input
-              id="keywords"
-              name="keywords"
-              value={
-                Array.isArray(formData.keywords)
-                  ? formData.keywords.join(', ')
-                  : formData.keywords || ''
-              }
-              onChange={e => {
-                const keywords = e.target.value
-                  .split(',')
-                  .map(k => k.trim())
-                  .filter(k => k);
-                setFormData(prev => ({ ...prev, keywords }));
-              }}
-              placeholder="Enter keywords separated by commas"
-              className="bg-karp-background border-karp-font/20 text-karp-font"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="image" className="text-karp-font">
-              Upload Image
-            </Label>
-            <Input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              onChange={e => {
-                const file = e.target.files?.[0] || null;
-                setImageFile(file);
-              }}
-              className="bg-karp-background border-karp-font/20 text-karp-font"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            {mode === 'edit' ? (
-              <Button type="submit" disabled={savingEdit} className="flex-1">
-                {savingEdit ? 'Saving...' : 'Save'}
-              </Button>
-            ) : (
-              <>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={createEventMutation.isPending}
-                  className="flex-1"
-                  onClick={() => submitEvent('draft')}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="manual_difficulty_coefficient"
+                  className="text-karp-font"
                 >
-                  {submittingAction === 'draft' && createEventMutation.isPending
-                    ? 'Saving...'
-                    : 'Save as Draft'}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createEventMutation.isPending}
-                  className="flex-1"
+                  Difficulty
+                </Label>
+                <select
+                  id="manual_difficulty_coefficient"
+                  name="manual_difficulty_coefficient"
+                  value={String(formData.manual_difficulty_coefficient ?? 0)}
+                  onChange={handleChange}
+                  className="bg-karp-background border border-karp-font/20 text-karp-font rounded-md px-3 py-2"
                 >
-                  {submittingAction === 'create' &&
-                  createEventMutation.isPending
-                    ? 'Creating...'
-                    : 'Create Event'}
+                  <option value="0">Easy</option>
+                  <option value="1">Moderate</option>
+                  <option value="2">Difficult</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="age_min" className="text-karp-font">
+                  Minimum Age
+                </Label>
+                <Input
+                  type="number"
+                  id="age_min"
+                  name="age_min"
+                  value={formData.age_min}
+                  onChange={handleChange}
+                  min="0"
+                  placeholder="0"
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="age_max" className="text-karp-font">
+                  Maximum Age
+                </Label>
+                <Input
+                  type="number"
+                  id="age_max"
+                  name="age_max"
+                  value={formData.age_max}
+                  onChange={handleChange}
+                  min="0"
+                  placeholder="0"
+                  className="bg-karp-background border-karp-font/20 text-karp-font"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-karp-font">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Enter event description"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keywords" className="text-karp-font">
+                Keywords
+              </Label>
+              <Input
+                id="keywords"
+                name="keywords"
+                value={keywordsInput}
+                onChange={e => setKeywordsInput(e.target.value)}
+                onBlur={() => {
+                  const keywords = keywordsInput
+                    .split(',')
+                    .map(k => k.trim())
+                    .filter(k => k);
+                  setFormData(prev => ({ ...prev, keywords }));
+                }}
+                placeholder="Enter keywords separated by commas"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image" className="text-karp-font">
+                Upload Image
+              </Label>
+              <Input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                onChange={e => {
+                  const file = e.target.files?.[0] || null;
+                  setImageFile(file);
+                }}
+                className="bg-karp-background border-karp-font/20 text-karp-font"
+              />
+            </div>
+
+            <div className="mt-auto bg-karp-background p-4 flex gap-3 border-t border-gray-200 sticky bottom-0">
+              {mode === 'edit' ? (
+                <Button type="submit" disabled={savingEdit} className="flex-1">
+                  {savingEdit ? 'Saving...' : 'Save'}
                 </Button>
-              </>
-            )}
-          </div>
-        </form>
-      </CardContent>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={createEventMutation.isPending}
+                    className="flex-1"
+                    onClick={() => submitEvent('draft')}
+                  >
+                    {submittingAction === 'draft' && createEventMutation.isPending
+                      ? 'Saving...'
+                      : 'Save as Draft'}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createEventMutation.isPending}
+                    className="flex-1"
+                  >
+                    {submittingAction === 'create' &&
+                    createEventMutation.isPending
+                      ? 'Creating...'
+                      : 'Create Event'}
+                  </Button>
+                </>
+              )}
+            </div>
+          </form>
+        </CardContent>
+      {/* </div> */}
     </Card>
   );
 }

@@ -31,6 +31,8 @@ export type Event = {
   created_at?: string; // ISO string format
   created_by: string;
   image_url?: string;
+  check_in_qr_code_image?: string;
+  check_out_qr_code_image?: string;
 };
 
 export type CreateEventRequest = Omit<

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useEvents, useUpdateEvent } from '@/hooks/useEvents';
+import { useEvents, useGenerateEventQrCodes, useUpdateEvent } from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
 import type { UpdateEventRequest } from '@/types/event';
 import { useAuth } from '@/context/AuthContext';
 import type { EventStatus, Event } from '@/types/event';
+import { EventPage } from './EventPage';
 import { useSearchParams } from 'react-router-dom';
 
 export function EventsList() {
@@ -20,9 +21,11 @@ export function EventsList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { data: events, isLoading, error } = useEvents(status, organizationId);
   const updateEvent = useUpdateEvent();
+  const generateEventQRCodes = useGenerateEventQrCodes();
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [displayingEvent, setDisplayingEvent] = useState<Event | null>(null);
   const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
   const [updatingAction, setUpdatingAction] = useState<
     'publish' | 'cancel' | 'approve' | 'reject' | null
@@ -140,7 +143,7 @@ export function EventsList() {
                 <div
                   key={event.id}
                   className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50 cursor-pointer"
-                  onClick={() => setEditingEvent(event)}
+                  onClick={() => setDisplayingEvent(event)}
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -172,10 +175,45 @@ export function EventsList() {
                       >
                         {event.status}
                       </span>
+                      {/* GO BACK TO THIS LATER */}
                       <div className="mt-2 text-sm text-karp-font/70">
                         <p>Max Volunteers: {event.max_volunteers}</p>
                         <p>Coins: {event.coins}</p>
                       </div>
+
+                      <div className="mt-3 flex gap-2  justify-end">
+                        {/* EDIT BUTTON — triggers setEditingEvent */}
+                        <Button
+                          size="sm"
+                          onClick={e => {
+                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            setEditingEvent(event);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+
+                      <div className="mt-3 flex gap-2  justify-end">
+                        {/* EDIT BUTTON — triggers setEditingEvent */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          // className="!bg-grey !text-black hover:!bg-black/80"
+                          onClick={e => {
+                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            generateEventQRCodes.mutate(event.id, {
+                            onSuccess: () => {
+                              alert("QR Codes Generated!");
+                            }
+                          });
+                          }}
+                          disabled={generateEventQRCodes.isPending}
+                        >
+                          {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
+                        </Button>
+                      </div>
+                      
                       <div className="mt-3 flex gap-2 justify-end">
                         {!(status === 'REJECTED' || status === 'CANCELLED') && (
                           <>
@@ -349,6 +387,16 @@ export function EventsList() {
         />
       </Modal>
 
+        <Modal
+        isOpen={!!displayingEvent}
+        onClose={() => setDisplayingEvent(null)}
+        title="Event"
+        size="2xl"
+      >
+        <EventPage
+          event={displayingEvent}
+        />
+      </Modal>
       <Modal
         isOpen={!!editingEventId}
         onClose={() => setEditingEventId(null)}
@@ -370,6 +418,7 @@ export function EventsList() {
             <Button variant="ghost" onClick={() => setEditingEventId(null)}>
               Cancel
             </Button>
+            
             <Button
               onClick={() => {
                 const ev = events?.find(e => e.id === editingEventId);
