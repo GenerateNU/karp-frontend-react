@@ -108,7 +108,7 @@ export function useGenerateEventQrCodes() {
 
   return useMutation({
     mutationFn: generateEventQRCodes,
-    onSuccess: (data, eventId) => {
+    onSuccess: (_, eventId) => {
 
       queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
 
