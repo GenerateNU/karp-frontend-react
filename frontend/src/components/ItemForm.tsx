@@ -71,7 +71,6 @@ export function ItemForm({
         description: initialItem.description ?? ''
       });
     }
-    console.log(formData);
   }, [initialItem]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,7 +213,7 @@ export function ItemForm({
               inputMode="decimal"
               step="0.01"
               min="0"
-              value={Number(formData.price) / 100}
+              value={formData.price}
               onChange={handleChange}
               required
               placeholder="Enter dollar price, e.g., 9.99"

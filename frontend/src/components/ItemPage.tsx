@@ -13,7 +13,6 @@ export function ItemPage({ item }: ItemPageProps) {
       </div>
     );
   }
-  console.log(item);
   const { user } = useAuth();
   const isAdmin = user?.user_type === 'ADMIN';
 
@@ -26,7 +25,7 @@ export function ItemPage({ item }: ItemPageProps) {
 
             <div className="mt-4 space-y-4">
             <div>
-                <h2 className="font-semibold">Coins</h2>
+                <h2 className="font-semibold">Dollar Cost</h2>
                 <p>{isAdmin ? `${item.price} coins` : `$${item.price / 100}`}</p>
             </div>
 

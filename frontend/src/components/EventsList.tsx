@@ -194,23 +194,25 @@ export function EventsList() {
                         </Button>
                       </div>
 
-                      <div className="mt-3 flex gap-2  justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={e => {
-                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
-                            generateEventQRCodes.mutate(event.id, {
-                            onSuccess: () => {
-                              alert("QR Codes Generated!");
-                            }
-                          });
-                          }}
-                          disabled={generateEventQRCodes.isPending}
-                        >
-                          {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
-                        </Button>
-                      </div>
+                      {event.status === 'APPROVED' && 
+                        (<div className="mt-3 flex gap-2  justify-end">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={e => {
+                              e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                              generateEventQRCodes.mutate(event.id, {
+                              onSuccess: () => {
+                                alert("QR Codes Generated!");
+                              }
+                            });
+                            }}
+                            disabled={generateEventQRCodes.isPending}
+                          >
+                            {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
+                          </Button>
+                        </div>) 
+                      }
                       
                       <div className="mt-3 flex gap-2 justify-end">
                         {!(status === 'REJECTED' || status === 'CANCELLED') && (
