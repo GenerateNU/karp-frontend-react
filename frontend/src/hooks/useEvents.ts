@@ -114,8 +114,8 @@ export function useGenerateEventQrCodes() {
 
       queryClient.invalidateQueries({ queryKey: ['event'] });
     },
-    onError: () => {
-      alert('Failed to generate QR Codes');
+    onError: (err: any) => {
+      alert(err.detail);
     }
   });
 }
