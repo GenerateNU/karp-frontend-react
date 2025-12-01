@@ -131,7 +131,6 @@ export function ItemForm({
           status: (action === 'draft'
             ? ('DRAFT' as ItemStatus)
             : newItem.status) as ItemStatus,
-          keywords: formData.keywords ?? [],
           description: formData.description ?? '',
         },
       });

@@ -80,7 +80,6 @@ export function useEditItemCoins() {
         price: number;
         expiration: string;
         status: string;
-        keywords: string[];
         description: string;
       };
     }) => itemApi.editItem(id, payload as never),

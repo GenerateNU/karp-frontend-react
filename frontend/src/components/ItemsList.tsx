@@ -481,6 +481,7 @@ export function ItemsList() {
                   price: Number(coinValue),
                   expiration: item.expiration,
                   status: item.status,
+                  description: item.description ?? '',
                 };
                 editItemCoins.mutate(
                   { id: item.id, payload },
