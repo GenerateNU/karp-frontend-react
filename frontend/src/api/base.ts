@@ -29,8 +29,8 @@ export async function makeRequest<T>(
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new HttpError(response.status, response.statusText, errorText);
+    const errorData = await response.json();
+    throw { status: response.status, ...errorData };  // include detail
   }
 
   return response.json() as Promise<T>;
