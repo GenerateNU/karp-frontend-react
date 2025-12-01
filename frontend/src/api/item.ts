@@ -65,3 +65,17 @@ export const itemApi = {
     await makeRequest<void>(`/item/edit/${id}`, 'PUT', item);
   },
 };
+
+export async function generateItemQRCode(
+  itemId: string,
+): Promise<Item> {
+  console.log("generateItemQRCodes CALLED with:", itemId);
+  const updatedItemData = await makeRequest<Item>(
+    `/item/${itemId}/generate-qr-code`,
+    'GET'
+  );
+
+
+  return updatedItemData
+
+}

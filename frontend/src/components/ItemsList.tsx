@@ -4,6 +4,7 @@ import {
   useActivateItem,
   useDeactivateItem,
   useEditItemCoins,
+  useGenerateItemQrCode
 } from '@/hooks/useItems';
 import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
@@ -12,6 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 import type { Item, ItemStatus } from '@/types/item';
 import { useUpdateItem } from '@/hooks/useItems';
+import { ItemPage } from './ItemPage';
 
 export function ItemsList() {
   const { user, userProfile } = useAuth();
@@ -31,8 +33,10 @@ export function ItemsList() {
   const deactivateItem = useDeactivateItem();
   const editItemCoins = useEditItemCoins();
   const updateItem = useUpdateItem();
+  const generateItemQRCode = useGenerateItemQrCode();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [displayingItem, setDisplayingItem] = useState<Item | null>(null);
   const [coinValue, setCoinValue] = useState<string>('');
   const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
   const [updatingAction, setUpdatingAction] = useState<
@@ -112,7 +116,7 @@ export function ItemsList() {
             <div
               key={item.id}
               className="bg-karp-background border border-karp-font/20 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-karp-primary/50 cursor-pointer"
-              onClick={() => setEditingItem(item)}
+              onClick={() => setDisplayingItem(item)}
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -144,9 +148,44 @@ export function ItemsList() {
                   >
                     {item.status}
                   </span>
-                  <div className="mt-2 text-sm text-karp-font/70">
+                  {/* Why is the vendor ID being displayed?? */}
+                  {/* <div className="mt-2 text-sm text-karp-font/70">
                     <p>Vendor ID: {item.vendor_id}</p>
+                  </div> */}
+
+                  <div className="mt-3 flex gap-2  justify-end">
+                        {/* EDIT BUTTON — triggers setEditingItem */}
+                        <Button
+                          size="sm"
+                          onClick={e => {
+                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            setEditingItem(item);
+                          }}
+                        >
+                          Edit
+                        </Button>
                   </div>
+
+                 {item.status === "ACTIVE" && 
+                  (<div className="mt-3 flex gap-2  justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={e => {
+                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            generateItemQRCode.mutate(item.id, {
+                            onSuccess: () => {
+                              alert("QR Codes Generated!");
+                            }
+                          });
+                          }}
+                          disabled={generateItemQRCode.isPending}
+                        >
+                          {generateItemQRCode.isPending ? "Generating..." : "Generate QR Code"}
+                        </Button>
+                      </div>
+                  )}
+
                   <div className="mt-3 flex gap-2 justify-end">
                     {!isAdmin ? (
                       item.status === 'REJECTED' ||
@@ -400,6 +439,17 @@ export function ItemsList() {
         />
       </Modal>
 
+       <Modal
+              isOpen={!!displayingItem}
+              onClose={() => setDisplayingItem(null)}
+              title="Item"
+              size="2xl"
+            >
+              <ItemPage
+                item={displayingItem}
+              />
+            </Modal>
+
       <Modal
         isOpen={!!editingItemId}
         onClose={() => setEditingItemId(null)}
@@ -431,6 +481,7 @@ export function ItemsList() {
                   price: Number(coinValue),
                   expiration: item.expiration,
                   status: item.status,
+                  description: item.description ?? '',
                 };
                 editItemCoins.mutate(
                   { id: item.id, payload },

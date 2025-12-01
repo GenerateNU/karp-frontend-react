@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { uploadImage } from '@/api/utils/image';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ItemFormProps {
   onSuccess?: () => void;
@@ -22,7 +23,9 @@ type ItemFormData = {
   expiration: string;
   price: string;
   image_url?: string;
+  keywords?: string[];
   status?: ItemStatus;
+  description?: string;
 };
 
 export function ItemForm({
@@ -38,11 +41,15 @@ export function ItemForm({
             .toISOString()
             .slice(0, 16),
           price: initialItem.price != null ? String(initialItem.price) : '',
+          keywords: initialItem.keywords,
+          description: initialItem.description
         }
       : {
           name: '',
           expiration: '',
           price: '',
+          keywords: [],
+          description: '',
         }
   );
 
@@ -60,6 +67,8 @@ export function ItemForm({
         name: initialItem.name,
         expiration: new Date(initialItem.expiration).toISOString().slice(0, 16),
         price: initialItem.price != null ? String(initialItem.price) : '',
+        keywords: initialItem.keywords ?? [],
+        description: initialItem.description ?? ''
       });
     }
   }, [initialItem]);
@@ -81,6 +90,8 @@ export function ItemForm({
             name: formData.name,
             expiration: formData.expiration,
             price: isNaN(parsedPrice) ? 0 : parsedPrice,
+            keywords: formData.keywords,
+            description: formData.description,
           },
         });
         if (imageFile) {
@@ -104,6 +115,8 @@ export function ItemForm({
         name: formData.name,
         expiration: formData.expiration,
         dollar_price: parseFloat(formData.price),
+        keywords: formData.keywords ?? [],
+        description: formData.description ?? '',
       };
       const newItem = await createItemMutation.mutateAsync(payload);
       // Immediately persist price and optional draft status via edit endpoint
@@ -117,6 +130,7 @@ export function ItemForm({
           status: (action === 'draft'
             ? ('DRAFT' as ItemStatus)
             : newItem.status) as ItemStatus,
+          description: formData.description ?? '',
         },
       });
       if (imageFile) {
@@ -206,6 +220,21 @@ export function ItemForm({
               className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
+
+          <div className="space-y-2">
+              <Label htmlFor="description" className="text-karp-font">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Enter event description"
+                className="bg-karp-background border-karp-font/20 text-karp-font"
+              />
+            </div>
 
           <div className="space-y-2">
             <Label htmlFor="image" className="text-karp-font">

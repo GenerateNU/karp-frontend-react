@@ -175,7 +175,7 @@ export function EventsList() {
                       >
                         {event.status}
                       </span>
-                      {/* GO BACK TO THIS LATER */}
+  
                       <div className="mt-2 text-sm text-karp-font/70">
                         <p>Max Volunteers: {event.max_volunteers}</p>
                         <p>Coins: {event.coins}</p>
@@ -194,25 +194,25 @@ export function EventsList() {
                         </Button>
                       </div>
 
-                      <div className="mt-3 flex gap-2  justify-end">
-                        {/* EDIT BUTTON — triggers setEditingEvent */}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          // className="!bg-grey !text-black hover:!bg-black/80"
-                          onClick={e => {
-                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
-                            generateEventQRCodes.mutate(event.id, {
-                            onSuccess: () => {
-                              alert("QR Codes Generated!");
-                            }
-                          });
-                          }}
-                          disabled={generateEventQRCodes.isPending}
-                        >
-                          {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
-                        </Button>
-                      </div>
+                      {event.status === 'APPROVED' && 
+                        (<div className="mt-3 flex gap-2  justify-end">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={e => {
+                              e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                              generateEventQRCodes.mutate(event.id, {
+                              onSuccess: () => {
+                                alert("QR Codes Generated!");
+                              }
+                            });
+                            }}
+                            disabled={generateEventQRCodes.isPending}
+                          >
+                            {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
+                          </Button>
+                        </div>) 
+                      }
                       
                       <div className="mt-3 flex gap-2 justify-end">
                         {!(status === 'REJECTED' || status === 'CANCELLED') && (
