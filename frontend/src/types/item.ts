@@ -14,7 +14,10 @@ export interface Item {
   time_posted: string;
   expiration: string;
   price: number;
-  image_url?: string; //?
+  image_url?: string; 
+  qr_code_image?: string;
+  keywords?: string[];
+  description?: string;
 }
 
 export interface CreateItemRequest {
@@ -23,6 +26,8 @@ export interface CreateItemRequest {
   image_url?: string;
   dollar_price: number;
   status?: ItemStatus;
+  keywords?: string[];
+  description?: string;
 }
 
 export interface UpdateItemRequest {
@@ -30,6 +35,9 @@ export interface UpdateItemRequest {
   price?: number;
   expiration?: string;
   status?: ItemStatus;
+  qr_code_image?: string;
+  keywords?: string[];
+  description?: string;
 }
 
 export type ItemSortParam = 'date' | 'name' | 'coins';

@@ -175,7 +175,7 @@ export function EventsList() {
                       >
                         {event.status}
                       </span>
-                      {/* GO BACK TO THIS LATER */}
+  
                       <div className="mt-2 text-sm text-karp-font/70">
                         <p>Max Volunteers: {event.max_volunteers}</p>
                         <p>Coins: {event.coins}</p>
@@ -195,11 +195,9 @@ export function EventsList() {
                       </div>
 
                       <div className="mt-3 flex gap-2  justify-end">
-                        {/* EDIT BUTTON — triggers setEditingEvent */}
                         <Button
                           size="sm"
                           variant="outline"
-                          // className="!bg-grey !text-black hover:!bg-black/80"
                           onClick={e => {
                             e.stopPropagation();  // IMPORTANT: prevents triggering the card click
                             generateEventQRCodes.mutate(event.id, {

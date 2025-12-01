@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { itemApi } from '@/api/item';
+import { itemApi, generateItemQRCode } from '@/api/item';
 import type {
   CreateItemRequest,
   UpdateItemRequest,
@@ -7,6 +7,18 @@ import type {
   SortOrder,
   ItemStatus,
 } from '@/types/item';
+
+
+export const itemKeys = {
+  all: ['items'] as const,
+  lists: () => [...itemKeys.all, 'list'] as const,
+  list: (filters: Record<string, unknown>) =>
+    [...itemKeys.lists(), { filters }] as const,
+  details: () => [...itemKeys.all, 'detail'] as const,
+  detail: (id: string) => [...itemKeys.details(), id] as const,
+  byVendor: (vendorId: string) =>
+    [...itemKeys.all, 'vendor', vendorId] as const,
+};
 
 export function useItems(
   status?: ItemStatus,
@@ -68,6 +80,8 @@ export function useEditItemCoins() {
         price: number;
         expiration: string;
         status: string;
+        keywords: string[];
+        description: string;
       };
     }) => itemApi.editItem(id, payload as never),
     onSuccess: (_, { id }) => {
@@ -96,5 +110,22 @@ export function useActivateItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
     },
+  });
+}
+
+export function useGenerateItemQrCode() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: generateItemQRCode,
+    onSuccess: (_, itemId) => {
+
+      queryClient.invalidateQueries({ queryKey: itemKeys.detail(itemId) });
+
+      queryClient.invalidateQueries({ queryKey: ['items'] });
+    },
+    onError: (err: any) => {
+      alert(err.detail);
+    }
   });
 }
