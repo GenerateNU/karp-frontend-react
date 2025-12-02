@@ -169,7 +169,7 @@ export function ItemsList() {
                     </Button>
                   </div>
 
-                  {item.status === 'ACTIVE' && (
+                  {item.status === 'ACTIVE' && !item.qr_code_image && (
                     <div className="mt-3 flex gap-2  justify-end">
                       <Button
                         size="sm"
