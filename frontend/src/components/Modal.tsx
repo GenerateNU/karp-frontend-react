@@ -63,12 +63,14 @@ export function Modal({
           margin: 0,
           maxHeight: '90vh',
           overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
           outline: 'none',
           backgroundColor: '#fffdfa',
         },
       }}
     >
-      <div className="flex flex-col h-full bg-karp-background">
+      <div className="flex flex-col h-full min-h-0 bg-karp-background">
         <div className="sticky top-0 bg-karp-background border-b border-karp-font/20 px-6 py-4 rounded-t-xl">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-karp-font">{title}</h2>
