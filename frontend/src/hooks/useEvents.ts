@@ -108,10 +108,19 @@ export function useGenerateEventQrCodes() {
 
   return useMutation({
     mutationFn: generateEventQRCodes,
-    onSuccess: (_, eventId) => {
+    onSuccess: (updatedEvent, eventId) => {
+      // Ensure the specific event detail is refreshed
       queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
-
+      // Refresh all event list queries (these use the ['event', ...] key)
       queryClient.invalidateQueries({ queryKey: ['event'] });
+      // Also refresh organization-scoped lists if org id is present
+      if (updatedEvent?.organization_id) {
+        queryClient.invalidateQueries({
+          queryKey: eventKeys.byOrganization(updatedEvent.organization_id),
+        });
+      }
+      // And refresh any 'events' keyed queries (safety for other consumers)
+      queryClient.invalidateQueries({ queryKey: eventKeys.all });
     },
     // eslint-disable-next-line
     onError: (err: any) => {
