@@ -42,7 +42,7 @@ export function ItemForm({
             .slice(0, 16),
           price: initialItem.price != null ? String(initialItem.price) : '',
           keywords: initialItem.keywords,
-          description: initialItem.description
+          description: initialItem.description,
         }
       : {
           name: '',
@@ -68,7 +68,7 @@ export function ItemForm({
         expiration: new Date(initialItem.expiration).toISOString().slice(0, 16),
         price: initialItem.price != null ? String(initialItem.price) : '',
         keywords: initialItem.keywords ?? [],
-        description: initialItem.description ?? ''
+        description: initialItem.description ?? '',
       });
     }
   }, [initialItem]);
@@ -222,19 +222,19 @@ export function ItemForm({
           </div>
 
           <div className="space-y-2">
-              <Label htmlFor="description" className="text-karp-font">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description || ''}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Enter event description"
-                className="bg-karp-background border-karp-font/20 text-karp-font"
-              />
-            </div>
+            <Label htmlFor="description" className="text-karp-font">
+              Description
+            </Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description || ''}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Enter event description"
+              className="bg-karp-background border-karp-font/20 text-karp-font"
+            />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="image" className="text-karp-font">

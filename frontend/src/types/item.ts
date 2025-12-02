@@ -14,7 +14,7 @@ export interface Item {
   time_posted: string;
   expiration: string;
   price: number;
-  image_url?: string; 
+  image_url?: string;
   qr_code_image?: string;
   keywords?: string[];
   description?: string;

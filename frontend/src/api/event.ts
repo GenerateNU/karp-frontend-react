@@ -76,16 +76,12 @@ export async function uploadEventImage(
   return { upload_url: (await presignedData).upload_url };
 }
 
-export async function generateEventQRCodes(
-  eventId: string,
-): Promise<Event> {
-  console.log("generateEventQRCodes CALLED with:", eventId);
+export async function generateEventQRCodes(eventId: string): Promise<Event> {
+  console.log('generateEventQRCodes CALLED with:', eventId);
   const updatedEventData = await makeRequest<Event>(
     `/event/${eventId}/generate-qr-codes`,
     'GET'
   );
 
-
-  return updatedEventData
-
+  return updatedEventData;
 }

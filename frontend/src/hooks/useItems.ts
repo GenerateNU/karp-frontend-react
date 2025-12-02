@@ -8,7 +8,6 @@ import type {
   ItemStatus,
 } from '@/types/item';
 
-
 export const itemKeys = {
   all: ['items'] as const,
   lists: () => [...itemKeys.all, 'list'] as const,
@@ -118,13 +117,13 @@ export function useGenerateItemQrCode() {
   return useMutation({
     mutationFn: generateItemQRCode,
     onSuccess: (_, itemId) => {
-
       queryClient.invalidateQueries({ queryKey: itemKeys.detail(itemId) });
 
       queryClient.invalidateQueries({ queryKey: ['items'] });
     },
+    // eslint-disable-next-line
     onError: (err: any) => {
       alert(err.detail);
-    }
+    },
   });
 }

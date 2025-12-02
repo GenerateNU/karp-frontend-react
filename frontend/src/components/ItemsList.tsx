@@ -4,7 +4,7 @@ import {
   useActivateItem,
   useDeactivateItem,
   useEditItemCoins,
-  useGenerateItemQrCode
+  useGenerateItemQrCode,
 } from '@/hooks/useItems';
 import { ItemForm } from '@/components/ItemForm';
 import { Modal } from '@/components/Modal';
@@ -42,6 +42,9 @@ export function ItemsList() {
   const [updatingAction, setUpdatingAction] = useState<
     'activate' | 'deactivate' | null
   >(null);
+  const [qrGeneratingIds, setQrGeneratingIds] = useState<Set<string>>(
+    new Set()
+  );
 
   if (isLoading) {
     return <div className="p-4">Loading items...</div>;
@@ -154,36 +157,50 @@ export function ItemsList() {
                   </div> */}
 
                   <div className="mt-3 flex gap-2  justify-end">
-                        {/* EDIT BUTTON — triggers setEditingItem */}
-                        <Button
-                          size="sm"
-                          onClick={e => {
-                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
-                            setEditingItem(item);
-                          }}
-                        >
-                          Edit
-                        </Button>
+                    {/* EDIT BUTTON — triggers setEditingItem */}
+                    <Button
+                      size="sm"
+                      onClick={e => {
+                        e.stopPropagation(); // IMPORTANT: prevents triggering the card click
+                        setEditingItem(item);
+                      }}
+                    >
+                      Edit
+                    </Button>
                   </div>
 
-                 {item.status === "ACTIVE" && 
-                  (<div className="mt-3 flex gap-2  justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={e => {
-                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
-                            generateItemQRCode.mutate(item.id, {
-                            onSuccess: () => {
-                              alert("QR Codes Generated!");
-                            }
+                  {item.status === 'ACTIVE' && (
+                    <div className="mt-3 flex gap-2  justify-end">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={e => {
+                          e.stopPropagation(); // IMPORTANT: prevents triggering the card click
+                          setQrGeneratingIds(prev => {
+                            const next = new Set(prev);
+                            next.add(item.id);
+                            return next;
                           });
-                          }}
-                          disabled={generateItemQRCode.isPending}
-                        >
-                          {generateItemQRCode.isPending ? "Generating..." : "Generate QR Code"}
-                        </Button>
-                      </div>
+                          generateItemQRCode.mutate(item.id, {
+                            onSuccess: () => {
+                              alert('QR Codes Generated!');
+                            },
+                            onSettled: () => {
+                              setQrGeneratingIds(prev => {
+                                const next = new Set(prev);
+                                next.delete(item.id);
+                                return next;
+                              });
+                            },
+                          });
+                        }}
+                        disabled={qrGeneratingIds.has(item.id)}
+                      >
+                        {qrGeneratingIds.has(item.id)
+                          ? 'Generating...'
+                          : 'Generate QR Code'}
+                      </Button>
+                    </div>
                   )}
 
                   <div className="mt-3 flex gap-2 justify-end">
@@ -439,16 +456,14 @@ export function ItemsList() {
         />
       </Modal>
 
-       <Modal
-              isOpen={!!displayingItem}
-              onClose={() => setDisplayingItem(null)}
-              title="Item"
-              size="2xl"
-            >
-              <ItemPage
-                item={displayingItem}
-              />
-            </Modal>
+      <Modal
+        isOpen={!!displayingItem}
+        onClose={() => setDisplayingItem(null)}
+        title="Item"
+        size="2xl"
+      >
+        <ItemPage item={displayingItem} />
+      </Modal>
 
       <Modal
         isOpen={!!editingItemId}

@@ -6,7 +6,7 @@ import {
   updateEvent,
   deleteEvent,
   getEventsByOrganization,
-  generateEventQRCodes
+  generateEventQRCodes,
 } from '@/api/event';
 import type { EventStatus } from '@/types/event';
 
@@ -109,13 +109,13 @@ export function useGenerateEventQrCodes() {
   return useMutation({
     mutationFn: generateEventQRCodes,
     onSuccess: (_, eventId) => {
-
       queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
 
       queryClient.invalidateQueries({ queryKey: ['event'] });
     },
+    // eslint-disable-next-line
     onError: (err: any) => {
       alert(err.detail);
-    }
+    },
   });
 }

@@ -66,16 +66,12 @@ export const itemApi = {
   },
 };
 
-export async function generateItemQRCode(
-  itemId: string,
-): Promise<Item> {
-  console.log("generateItemQRCodes CALLED with:", itemId);
+export async function generateItemQRCode(itemId: string): Promise<Item> {
+  console.log('generateItemQRCodes CALLED with:', itemId);
   const updatedItemData = await makeRequest<Item>(
     `/item/${itemId}/generate-qr-code`,
     'GET'
   );
 
-
-  return updatedItemData
-
+  return updatedItemData;
 }

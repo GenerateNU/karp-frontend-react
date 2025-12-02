@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { useEvents, useGenerateEventQrCodes, useUpdateEvent } from '@/hooks/useEvents';
+import {
+  useEvents,
+  useGenerateEventQrCodes,
+  useUpdateEvent,
+} from '@/hooks/useEvents';
 import { EventForm } from '@/components/EventForm';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/ui/button';
@@ -175,7 +179,7 @@ export function EventsList() {
                       >
                         {event.status}
                       </span>
-  
+
                       <div className="mt-2 text-sm text-karp-font/70">
                         <p>Max Volunteers: {event.max_volunteers}</p>
                         <p>Coins: {event.coins}</p>
@@ -186,7 +190,7 @@ export function EventsList() {
                         <Button
                           size="sm"
                           onClick={e => {
-                            e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                            e.stopPropagation(); // IMPORTANT: prevents triggering the card click
                             setEditingEvent(event);
                           }}
                         >
@@ -194,26 +198,28 @@ export function EventsList() {
                         </Button>
                       </div>
 
-                      {event.status === 'APPROVED' && 
-                        (<div className="mt-3 flex gap-2  justify-end">
+                      {event.status === 'APPROVED' && (
+                        <div className="mt-3 flex gap-2  justify-end">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={e => {
-                              e.stopPropagation();  // IMPORTANT: prevents triggering the card click
+                              e.stopPropagation(); // IMPORTANT: prevents triggering the card click
                               generateEventQRCodes.mutate(event.id, {
-                              onSuccess: () => {
-                                alert("QR Codes Generated!");
-                              }
-                            });
+                                onSuccess: () => {
+                                  alert('QR Codes Generated!');
+                                },
+                              });
                             }}
                             disabled={generateEventQRCodes.isPending}
                           >
-                            {generateEventQRCodes.isPending ? "Generating..." : "Generate QR Codes"}
+                            {generateEventQRCodes.isPending
+                              ? 'Generating...'
+                              : 'Generate QR Codes'}
                           </Button>
-                        </div>) 
-                      }
-                      
+                        </div>
+                      )}
+
                       <div className="mt-3 flex gap-2 justify-end">
                         {!(status === 'REJECTED' || status === 'CANCELLED') && (
                           <>
@@ -387,15 +393,13 @@ export function EventsList() {
         />
       </Modal>
 
-        <Modal
+      <Modal
         isOpen={!!displayingEvent}
         onClose={() => setDisplayingEvent(null)}
         title="Event"
         size="2xl"
       >
-        <EventPage
-          event={displayingEvent}
-        />
+        <EventPage event={displayingEvent} />
       </Modal>
       <Modal
         isOpen={!!editingEventId}
@@ -418,7 +422,7 @@ export function EventsList() {
             <Button variant="ghost" onClick={() => setEditingEventId(null)}>
               Cancel
             </Button>
-            
+
             <Button
               onClick={() => {
                 const ev = events?.find(e => e.id === editingEventId);

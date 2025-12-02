@@ -30,7 +30,7 @@ export async function makeRequest<T>(
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw { status: response.status, ...errorData };  // include detail
+    throw { status: response.status, ...errorData }; // include detail
   }
 
   return response.json() as Promise<T>;
