@@ -231,7 +231,7 @@ export function ItemForm({
               value={formData.description || ''}
               onChange={handleChange}
               rows={4}
-              placeholder="Enter event description"
+              placeholder="Enter item description"
               className="bg-karp-background border-karp-font/20 text-karp-font"
             />
           </div>
