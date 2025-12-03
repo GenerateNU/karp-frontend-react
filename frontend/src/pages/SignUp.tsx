@@ -10,6 +10,7 @@ import { signupApi } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
 import { createVendor } from '@/api/vendor';
 import { createOrganization } from '@/api/organization';
+import { uploadImage } from '@/api/utils/image';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [orgImageFile, setOrgImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     // Redirect to account type selection if no user type is provided
@@ -89,11 +91,25 @@ const SignUp = () => {
           formData.address
         ) {
           try {
-            await createOrganization({
+            const newOrganization = await createOrganization({
               name: `${firstName.trim()} ${lastName.trim()}`,
               description: formData.description,
               address: formData.address,
             });
+            if (orgImageFile) {
+              try {
+                await uploadImage(
+                  'organization',
+                  newOrganization.id,
+                  orgImageFile
+                );
+              } catch (uploadErr) {
+                console.error(
+                  'Failed to upload organization image:',
+                  uploadErr
+                );
+              }
+            }
           } catch (profileError) {
             console.error(
               'Failed to create organization profile:',
@@ -170,6 +186,24 @@ const SignUp = () => {
                 className="bg-white border-karp-font/20 text-karp-font"
               />
             </div>
+
+            {formData?.userType === 'ORGANIZATION' && (
+              <div className="space-y-2">
+                <Label htmlFor="orgImage" className="text-karp-font">
+                  Organization image (optional)
+                </Label>
+                <Input
+                  id="orgImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={e => {
+                    const file = e.target.files?.[0] || null;
+                    setOrgImageFile(file);
+                  }}
+                  className="bg-white border-karp-font/20 text-karp-font"
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="username" className="text-karp-font">
