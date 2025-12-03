@@ -12,7 +12,7 @@ export function EventPage({ event }: EventPageProps) {
       </div>
     );
   }
-
+  console.log(event);
   return (
     <div className="min-h-screen p-6 bg-gray-50 -mt-15">
       <div className="mx-auto max-w-3xl p-6 space-y-6">

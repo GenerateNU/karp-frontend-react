@@ -202,6 +202,7 @@ export function EventsList() {
                       </div>
 
                       {event.status === 'APPROVED' &&
+                      !isAdmin &&
                         !event.check_in_qr_code_image &&
                         !event.check_out_qr_code_image && (
                           <div className="mt-3 flex gap-2  justify-end">
