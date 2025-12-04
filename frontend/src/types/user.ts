@@ -12,20 +12,20 @@ export type AuthUser = {
 
 export type VolunteerProfile = {
   id: string;
-  user_id: string;
   first_name: string;
   last_name: string;
-  email: string;
-  phone: string;
-  address: string;
-  date_of_birth: string;
-  emergency_contact_name: string;
-  emergency_contact_phone: string;
-  skills: string[];
-  interests: string[];
-  availability: string;
-  created_at: string;
-  updated_at: string;
+  coins: number;
+  preferred_name?: string | null;
+  birth_date: string; // ISO datetime string
+  preferences: string[];
+  training_documents: { file_type: string; image_s3_key: string }[];
+  qualifications: string[];
+  preferred_days: string[];
+  is_active: boolean;
+  experience: number;
+  location: { type: string; coordinates: number[] };
+  image_s3_key?: string | null;
+  current_level: number;
 };
 
 export type VendorProfile = {

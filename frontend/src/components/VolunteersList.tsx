@@ -27,67 +27,30 @@ export function VolunteersList() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-semibold text-karp-font">
-                    {volunteer.first_name} {volunteer.last_name}
+                    {volunteer.preferred_name
+                      ? `${volunteer.preferred_name} (${volunteer.first_name} ${volunteer.last_name})`
+                      : `${volunteer.first_name} ${volunteer.last_name}`}
                   </h3>
-                  <p className="text-karp-font/70">{volunteer.email}</p>
-                  <p className="text-karp-font/70">{volunteer.phone}</p>
-                  <p className="text-karp-font/70">{volunteer.address}</p>
                   <p className="text-sm text-karp-font/60">
                     Date of Birth:{' '}
-                    {new Date(volunteer.date_of_birth).toLocaleDateString()}
+                    {volunteer?.birth_date
+                      ? new Date(volunteer.birth_date).toLocaleDateString()
+                      : 'N/A'}
                   </p>
-                  {volunteer.skills && volunteer.skills.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium text-karp-font/80">
-                        Skills:
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {volunteer.skills.map((skill, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-karp-primary/20 text-karp-primary rounded text-xs"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {volunteer.interests && volunteer.interests.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium text-karp-font/80">
-                        Interests:
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {volunteer.interests.map((interest, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-karp-green/20 text-karp-green rounded text-xs"
-                          >
-                            {interest}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {volunteer.availability && (
-                    <p className="text-sm text-karp-font/70 mt-2">
-                      Availability: {volunteer.availability}
-                    </p>
-                  )}
-                  <div className="mt-2 text-sm text-karp-font/70">
-                    <p>
-                      Emergency Contact: {volunteer.emergency_contact_name} (
-                      {volunteer.emergency_contact_phone})
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-karp-font/60">
-                    Created:{' '}
-                    {new Date(volunteer.created_at).toLocaleDateString()}
+                  <p className="text-sm text-karp-font/70 mt-2">
+                    Coins: {volunteer.coins}
+                  </p>
+                  <p className="text-sm text-karp-font/70">
+                    Level: {volunteer.current_level}
+                  </p>
+                  <p className="text-sm text-karp-font/70">
+                    Experience: {volunteer.experience}
+                  </p>
+                  <p className="text-sm text-karp-font/70">
+                    Status: {volunteer.is_active ? 'Active' : 'Inactive'}
                   </p>
                 </div>
+                <div />
               </div>
             </div>
           ))}
