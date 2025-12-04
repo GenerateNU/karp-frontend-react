@@ -108,6 +108,17 @@ export function VendorsList() {
                       {vendor.status}
                     </span>
                   </div>
+                  <div className="text-sm text-karp-font/70 space-y-1">
+                    {vendor.business_type && (
+                      <p>Business Type: {vendor.business_type}</p>
+                    )}
+                    {vendor.created_at && (
+                      <p>
+                        Created:{' '}
+                        {new Date(vendor.created_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
                   {vendor.description && (
                     <p className="text-karp-font/80 mt-2">
                       {vendor.description}

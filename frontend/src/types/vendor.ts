@@ -3,8 +3,11 @@ export type VendorStatus = 'APPROVED' | 'PENDING' | 'REJECTED' | 'DELETED';
 export type Vendor = {
   id: string;
   name: string;
+  business_type?: string;
   description?: string;
   status: VendorStatus;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type CreateVendorRequest = {
