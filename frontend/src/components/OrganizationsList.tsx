@@ -89,7 +89,7 @@ export function OrganizationsList() {
         </div>
       </div>
       {/* spacer to offset fixed title bar */}
-      <div style={{ height: 110 }} />
+      <div style={{ height: 130 }} />
 
       {filteredOrganizations.length > 0 ? (
         <div className="mx-auto w-full min-w-[1100px] grid gap-4">

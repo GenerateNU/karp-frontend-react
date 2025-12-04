@@ -79,7 +79,7 @@ export function VendorsList() {
           </div>
         </div>
       </div>
-      <div style={{ height: 110 }} />
+      <div style={{ height: 130 }} />
 
       {vendors && vendors.length > 0 ? (
         <div className="mx-auto w-full min-w-[1100px] grid gap-4">

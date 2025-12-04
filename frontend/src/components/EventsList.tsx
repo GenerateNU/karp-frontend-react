@@ -140,7 +140,7 @@ export function EventsList() {
         </div>
       </div>
       {/* spacer to offset fixed title+tabs bar height */}
-      <div style={{ height: 110 }} />
+      <div style={{ height: 130 }} />
 
       <div className="mx-auto w-full min-w-[1100px]">
         {events && events.length > 0 ? (
@@ -202,7 +202,7 @@ export function EventsList() {
                       </div>
 
                       {event.status === 'APPROVED' &&
-                      !isAdmin &&
+                        !isAdmin &&
                         !event.check_in_qr_code_image &&
                         !event.check_out_qr_code_image && (
                           <div className="mt-3 flex gap-2  justify-end">

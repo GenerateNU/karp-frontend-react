@@ -111,7 +111,7 @@ export function ItemsList() {
         </div>
       </div>
       {/* spacer to offset the fixed title bar */}
-      <div style={{ height: 110 }} />
+      <div style={{ height: 130 }} />
 
       {items && items.length > 0 ? (
         <div className="mx-auto w-full min-w-[1100px] grid gap-4">
