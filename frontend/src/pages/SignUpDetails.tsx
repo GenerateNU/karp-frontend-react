@@ -45,6 +45,7 @@ const SignUpDetails = () => {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [website, setWebsite] = useState<string | null>(null);
 
   useEffect(() => {
     // Redirect to account type selection if no user type is provided
@@ -69,6 +70,7 @@ const SignUpDetails = () => {
         industryType: industryType.trim(),
         description: description.trim(),
         address: address.trim(),
+        website: website?.trim(),
       },
     });
   }
@@ -141,6 +143,20 @@ const SignUpDetails = () => {
                 onChange={e => setAddress(e.target.value)}
                 required
                 placeholder="Address here"
+                className="bg-white border-karp-font/20 text-karp-font"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-karp-font">
+                Website (optional)
+              </Label>
+              <Input
+                id="email"
+                type="url"
+                value={website || ''}
+                onChange={e => setWebsite(e.target.value)}
+                placeholder="Enter your website (optional)."
                 className="bg-white border-karp-font/20 text-karp-font"
               />
             </div>

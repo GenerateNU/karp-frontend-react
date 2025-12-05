@@ -21,6 +21,7 @@ const SignUp = () => {
     industryType?: string;
     description?: string;
     address?: string;
+    website?: string;
   };
 
   const [firstName, setFirstName] = useState('');
@@ -95,6 +96,7 @@ const SignUp = () => {
               name: `${firstName.trim()} ${lastName.trim()}`,
               description: formData.description,
               address: formData.address,
+              website: formData.website?.trim() || undefined,
             });
             if (orgImageFile) {
               try {

@@ -9,6 +9,8 @@ type CreateOrganizationRequest = {
   name: string;
   description: string;
   address: string;
+  website?: string;
+  phoneNumber?: string;
 };
 
 type OrganizationResponse = {
@@ -16,6 +18,8 @@ type OrganizationResponse = {
   name: string;
   description: string;
   address: string;
+  website?: string;
+  phoneNumber?: string;
   [key: string]: unknown;
 };
 
