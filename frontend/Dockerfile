@@ -30,4 +30,4 @@ RUN chmod -R 777 node_modules
 # run the app
 USER bun
 EXPOSE 3000/tcp
-CMD ["bun", "run", "preview"]
+CMD ["bun", "run", "dev"]
