@@ -9,7 +9,7 @@ services:
         VITE_BACKEND_BASE_URL: ${VITE_BACKEND_BASE_URL}
     ports:
       - "3000:3000"
-    command: npm start
+    command: npm run build
     develop:
       watch:
         - action: sync+restart
