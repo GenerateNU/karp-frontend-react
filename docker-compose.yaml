@@ -1,0 +1,24 @@
+services:
+  frontend:
+    env_file:
+      - ./frontend/.env
+    build:
+      context: ./frontend
+      dockerfile: DockerFile
+      args:
+        VITE_BACKEND_BASE_URL: ${VITE_BACKEND_BASE_URL}
+    ports:
+      - "3000:3000"
+    command: npm run build
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./frontend
+          target: /app
+    networks:
+      - app-network
+    container_name: frontend
+
+networks:
+  app-network:
+    driver: bridge
