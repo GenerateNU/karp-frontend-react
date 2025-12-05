@@ -16,6 +16,13 @@ export default defineConfig({
     allowedHosts: true
   },
   preview: {
-    allowedHosts: ["oyster-app-84rij.ondigitalocean.app"]
+    host: true,
+    port: 3000,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'oyster-app-84rij.ondigitalocean.app',
+      '.ondigitalocean.app',
+    ],
   },
 });
