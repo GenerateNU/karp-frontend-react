@@ -16,8 +16,6 @@ export default defineConfig({
     allowedHosts: true
   },
   preview: {
-    allowedHosts: [
-      'oyster-app-84rij.ondigitalocean.app',
-    ],
+    allowedHosts: true
   },
 });
