@@ -31,4 +31,4 @@ USER bun
 EXPOSE 3000
 
 # use your prod entrypoint, not dev
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "preview"]
