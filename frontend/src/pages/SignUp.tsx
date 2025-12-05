@@ -78,10 +78,15 @@ const SignUp = () => {
         // (industryType, description, address) are saved in a separate API call
         if (formData.userType === 'VENDOR' && formData.industryType) {
           try {
-            await createVendor({
-              name: `${firstName.trim()} ${lastName.trim()}`,
-              business_type: formData.industryType,
-            });
+            if (!formData.address) {
+              console.error('Vendor address missing during creation');
+            } else {
+              await createVendor({
+                name: `${firstName.trim()} ${lastName.trim()}`,
+                business_type: formData.industryType,
+                address: formData.address,
+              });
+            }
           } catch (profileError) {
             console.error('Failed to create vendor profile:', profileError);
             // Continue even if profile creation fails - user can create it later

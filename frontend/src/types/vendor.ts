@@ -13,6 +13,7 @@ export type Vendor = {
 export type CreateVendorRequest = {
   name: string;
   business_type: string;
+  address: string;
 };
 
 export type VendorResponse = {

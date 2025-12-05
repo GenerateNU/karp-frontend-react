@@ -10,7 +10,7 @@ export type Organization = {
   description: string;
   status: OrganizationStatus;
   website?: string;
-  phoneNumber?: string
+  phoneNumber?: string;
 };
 
 export type UpdateOrganizationRequest = {
@@ -18,5 +18,5 @@ export type UpdateOrganizationRequest = {
   description: string;
   status: OrganizationStatus;
   website?: string;
-  phoneNumber?: string
+  phoneNumber?: string;
 };
