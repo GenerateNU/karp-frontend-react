@@ -31,4 +31,4 @@ COPY --from=prerelease /usr/src/app/package.json ./package.json
 
 USER bun
 EXPOSE 3000
-CMD ["bun", "run", "preview"]
+CMD ["bunx", "--bun", "vite", "preview", "--host", "0.0.0.0", "--port", "3000"]
