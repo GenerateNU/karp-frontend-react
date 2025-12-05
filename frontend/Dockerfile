@@ -11,6 +11,7 @@ COPY package.json bun.lock /temp/prod/
 RUN cd /temp/prod && bun install --frozen-lockfile --production --ignore-scripts
 
 FROM base AS prerelease
+WORKDIR /usr/src/app
 COPY --from=install /temp/dev/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
@@ -20,14 +21,14 @@ FROM base AS release
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-# production deps
 COPY --from=install /temp/prod/node_modules ./node_modules
 
-# copy built app (and anything else needed at runtime)
-COPY --from=prerelease /usr/src/app . 
+COPY --from=prerelease /usr/src/app/dist ./dist
+COPY --from=prerelease /usr/src/app/index.html ./index.html
+COPY --from=prerelease /usr/src/app/public ./public
+COPY --from=prerelease /usr/src/app/vite.config.* ./   
+COPY --from=prerelease /usr/src/app/package.json ./package.json
 
 USER bun
 EXPOSE 3000
-
-# use your prod entrypoint, not dev
 CMD ["bun", "run", "preview"]
