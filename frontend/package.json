@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky"
+    "preview": "vite preview --port 3000"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
